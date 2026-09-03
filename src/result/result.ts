@@ -258,6 +258,18 @@ export abstract class ResultBase<T, E> {
       (error) => ResultPromise.err(error),
     );
   }
+
+  /**
+   * Iterator support for {@link Result.safeTry}: `yield* result` in a safeTry
+   * generator evaluates to the value on `Ok`, or short-circuits the block to
+   * this error on `Err`.
+   */
+  *[Symbol.iterator](): Generator<Err<never, E>, T> {
+    if (this.isErr()) {
+      yield this as unknown as Err<never, E>;
+    }
+    return (this as unknown as Ok<T, E>).value;
+  }
 }
 
 /**
@@ -330,6 +342,23 @@ export const Result = Object.freeze({
   /** True when `value` is a `Result` (an {@link Ok} or an {@link Err}). */
   is: (value: unknown): value is Result<unknown, unknown> =>
     value instanceof ResultBase,
+
+  /**
+   * Run a generator of fallible steps as one `Result`. `yield* step` evaluates
+   * to the step's value, or short-circuits the whole block to the first error;
+   * the generator returns the final `Result`. `E` is the union of every step's
+   * error type.
+   *
+   * @example
+   * const r = Result.safeTry(function* () {
+   *   const a = yield* parse(input);   // Result<number, ParseError>
+   *   const b = yield* positive(a);    // Result<number, RangeError>
+   *   return ok(a + b);                // Result<number, ParseError | RangeError>
+   * });
+   */
+  safeTry<T, E>(block: () => Generator<Result<never, E>, Result<T, E>>): Result<T, E> {
+    return block().next().value;
+  },
 
   /** {@link parseError} — coerce an unknown thrown value into an `Error`. */
   parseError,

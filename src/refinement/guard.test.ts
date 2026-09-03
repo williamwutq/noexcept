@@ -89,3 +89,25 @@ test("composed shape over branded fields", () => {
   expect(User.is({ name: "ada", email: "nope" })).toBe(false);
   expect(User.is({ name: "", email: "a@b.com" })).toBe(false);
 });
+
+test("record: arbitrary keys, one value type", () => {
+  const Scores = Refinement.record((v): v is number => typeof v === "number");
+  expect(Scores.is({ a: 1, b: 2 })).toBe(true);
+  expect(Scores.is({})).toBe(true);
+  expect(Scores.is({ a: 1, b: "x" })).toBe(false);
+  expect(Scores.is([1, 2])).toBe(false);
+  expect(Scores.is(null)).toBe(false);
+});
+
+test("tuple: fixed length, per-position specs", () => {
+  const Pair = Refinement.tuple([
+    (v): v is string => typeof v === "string",
+    (v): v is number => typeof v === "number",
+  ]);
+  expect(Pair.is(["a", 1])).toBe(true);
+  expect(Pair.is(["a", "b"])).toBe(false);
+  expect(Pair.is(["a"])).toBe(false); // wrong length
+  expect(Pair.is(["a", 1, 2])).toBe(false);
+  const parsed = Pair.parse(["a", 1]);
+  expect(parsed).toEqual(["a", 1]);
+});

@@ -167,4 +167,25 @@ export const Maybe = Object.freeze({
   /** Adopt an {@link Option}, mapping its `null` absence onto `undefined`. */
   fromOption: <T>(option: Option<T>): Maybe<T> =>
     option !== null ? option : undefined,
+
+  /**
+   * Iterator step for {@link Maybe.safeTry}: `yield* Maybe.safeUnwrap(m)`
+   * evaluates to the value, or short-circuits the block to `undefined`.
+   */
+  *safeUnwrap<T>(maybe: Maybe<T>): Generator<undefined, T> {
+    if (maybe === undefined) {
+      yield undefined;
+    }
+    return maybe as T;
+  },
+
+  /**
+   * Run a generator of steps as one `Maybe`. Each
+   * `yield* Maybe.safeUnwrap(m)` evaluates to the value, or short-circuits the
+   * block to `undefined`; the generator returns the final `Maybe`.
+   */
+  safeTry<T>(block: () => Generator<undefined, Maybe<T>>): Maybe<T> {
+    const step = block().next();
+    return step.done ? step.value : undefined;
+  },
 });

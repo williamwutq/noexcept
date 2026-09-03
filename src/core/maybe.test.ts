@@ -38,3 +38,16 @@ test("construction & Result bridge", () => {
   expect(Maybe.okOr(5, "absent").unwrap()).toBe(5);
   expect(Maybe.okOr(undefined as Maybe<number>, "absent").unwrapErr()).toBe("absent");
 });
+
+test("Maybe.safeTry short-circuits on undefined", () => {
+  const good = Maybe.safeTry(function* () {
+    const a = yield* Maybe.safeUnwrap(2);
+    return a + 1;
+  });
+  expect(good).toBe(3);
+  const none = Maybe.safeTry(function* () {
+    const a = yield* Maybe.safeUnwrap(undefined as Maybe<number>);
+    return a + 1;
+  });
+  expect(none).toBeUndefined();
+});

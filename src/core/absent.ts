@@ -113,4 +113,26 @@ export const Absent = Object.freeze({
   /** Collapse both absences to `undefined` — commit to {@link Maybe}. */
   toMaybe: <T>(value: Absent<T>): Maybe<T> =>
     value !== null && value !== undefined ? value : undefined,
+
+  /**
+   * Iterator step for {@link Absent.safeTry}: `yield* Absent.safeUnwrap(v)`
+   * evaluates to the value, or short-circuits the block to the absent value.
+   */
+  *safeUnwrap<T>(value: Absent<T>): Generator<null | undefined, T> {
+    if (value === null) {
+      yield null;
+    } else if (value === undefined) {
+      yield undefined;
+    }
+    return value as T;
+  },
+
+  /**
+   * Run a generator of steps as one `Absent`. Each
+   * `yield* Absent.safeUnwrap(v)` evaluates to the value, or short-circuits the
+   * block to the absent value; the generator returns the final `Absent`.
+   */
+  safeTry<T>(block: () => Generator<null | undefined, Absent<T>>): Absent<T> {
+    return block().next().value;
+  },
 });

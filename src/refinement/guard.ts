@@ -22,7 +22,9 @@
  * - {@link Refinement.brand} — relabel a refinement's output as a {@link Brand}
  * - {@link Refinement.and} / {@link Refinement.or} — intersection / union
  * - {@link Refinement.array} / {@link Refinement.nonEmptyArray} — lists
- * - {@link Refinement.shape} — objects, field by field
+ * - {@link Refinement.shape} — objects with known fields
+ * - {@link Refinement.record} — objects of arbitrary keys with one value type
+ * - {@link Refinement.tuple} — fixed-length tuples, per position
  * - {@link Refinement.nullable} / {@link Refinement.optional} — a field's `null` / `undefined`
  * - {@link Refinement.literal} — a union of literal values
  * - {@link Refinement.matches} — a string matching a pattern
@@ -161,6 +163,44 @@ export const Refinement = Object.freeze({
       for (const [key, guard] of entries) if (!guard(record[key])) return false;
       return true;
     });
+  },
+
+  /**
+   * A plain object of arbitrary string keys whose every value accepts `value`.
+   * For maps and dictionaries; use {@link Refinement.shape} for known keys.
+   *
+   * @example
+   * const Scores = Refinement.record(Integer); // Record<string, Integer>
+   */
+  record: <V>(value: Spec<V>): Refinement<Record<string, V>> => {
+    const guard = guardOf(value);
+    return derive((candidate): candidate is Record<string, V> => {
+      if (candidate === null || typeof candidate !== "object" || Array.isArray(candidate)) {
+        return false;
+      }
+      for (const key of Object.keys(candidate)) {
+        if (!guard((candidate as Record<string, unknown>)[key])) return false;
+      }
+      return true;
+    });
+  },
+
+  /**
+   * A fixed-length tuple, each position accepting the spec at that position.
+   *
+   * @example
+   * const Pair = Refinement.tuple([Primitives.String, Integer]); // [string, Integer]
+   */
+  tuple: <S extends ReadonlyArray<Spec<unknown>>>(
+    specs: readonly [...S],
+  ): Refinement<{ [K in keyof S]: SpecValue<S[K]> }> => {
+    const guards = specs.map(guardOf);
+    return derive(
+      (value): value is { [K in keyof S]: SpecValue<S[K]> } =>
+        Array.isArray(value) &&
+        value.length === guards.length &&
+        guards.every((guard, index) => guard(value[index])),
+    );
   },
 
   /** A field that may be `null`: accepts `null` or `spec`. */

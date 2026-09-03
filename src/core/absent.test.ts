@@ -34,3 +34,24 @@ test("Result bridge: okOr / okOrElse", () => {
   expect(Absent.okOr(null as Absent<number>, "absent").unwrapErr()).toBe("absent");
   expect(Absent.okOrElse(undefined as Absent<number>, () => "computed").unwrapErr()).toBe("computed");
 });
+
+test("Absent.safeTry short-circuits on either absence", () => {
+  const good = Absent.safeTry(function* () {
+    const a = yield* Absent.safeUnwrap(2);
+    const b = yield* Absent.safeUnwrap(3);
+    return a + b;
+  });
+  expect(good).toBe(5);
+
+  const viaNull = Absent.safeTry(function* () {
+    const a = yield* Absent.safeUnwrap(null as Absent<number>); // short-circuits, preserving null
+    return a + 1;
+  });
+  expect(viaNull).toBe(null);
+
+  const viaUndefined = Absent.safeTry(function* () {
+    const a = yield* Absent.safeUnwrap(undefined as Absent<number>);
+    return a + 1;
+  });
+  expect(viaUndefined).toBeUndefined();
+});

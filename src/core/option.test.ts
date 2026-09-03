@@ -83,3 +83,22 @@ test("bridge to Result: okOr / okOrElse", () => {
   expect(Option.okOr(null as Option<number>, "absent").unwrapErr()).toBe("absent");
   expect(Option.okOrElse(null as Option<number>, () => "computed").unwrapErr()).toBe("computed");
 });
+
+test("Option.safeTry chains and short-circuits on none", () => {
+  const findA = (): Option<number> => 2;
+  const findB = (n: number): Option<number> => (n > 0 ? n * 10 : null);
+
+  const good = Option.safeTry(function* () {
+    const a = yield* Option.safeUnwrap(findA());
+    const b = yield* Option.safeUnwrap(findB(a));
+    return a + b;
+  });
+  expect(good).toBe(22);
+
+  const none = Option.safeTry(function* () {
+    const a = yield* Option.safeUnwrap(null as Option<number>); // short-circuits
+    const b = yield* Option.safeUnwrap(findB(a));
+    return a + b;
+  });
+  expect(none).toBe(null);
+});

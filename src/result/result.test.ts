@@ -177,3 +177,32 @@ test("Result.is / parseError", () => {
   expect(Result.parseError("boom").message).toBe("boom");
   expect(Result.parseError(new Error("e")).message).toBe("e");
 });
+
+test("Result.safeTry chains and short-circuits on the first error", () => {
+  const parse = (s: string): Result<number, "nan"> => {
+    const n = Number(s);
+    return Number.isNaN(n) ? err("nan") : ok(n);
+  };
+  const positive = (n: number): Result<number, "neg"> => (n > 0 ? ok(n) : err("neg"));
+
+  const good = Result.safeTry(function* () {
+    const a = yield* parse("2");
+    const b = yield* positive(a);
+    return ok<number, "nan" | "neg">(a + b);
+  });
+  expect(good.unwrap()).toBe(4);
+
+  const nan = Result.safeTry(function* () {
+    const a = yield* parse("x"); // short-circuits here
+    const b = yield* positive(a);
+    return ok<number, "nan" | "neg">(a + b);
+  });
+  expect(nan.unwrapErr()).toBe("nan");
+
+  const neg = Result.safeTry(function* () {
+    const a = yield* parse("-5");
+    const b = yield* positive(a); // short-circuits here
+    return ok<number, "nan" | "neg">(a + b);
+  });
+  expect(neg.unwrapErr()).toBe("neg");
+});
