@@ -64,6 +64,14 @@ test("collection splitters over mixed inputs", async () => {
   expect(await EitherPromise.partition(items)).toEqual([[1, 2], ["a", "b"]]);
 });
 
+test("EitherPromise.select chooses by condition, accepting values or promises", async () => {
+  expect((await EitherPromise.select(true, 1, "x")).unwrapMain()).toBe(1);
+  expect((await EitherPromise.select(false, 1, "x")).unwrapAlt()).toBe("x");
+  expect(
+    (await EitherPromise.select(true, Promise.resolve(5), Promise.resolve("y"))).unwrapMain(),
+  ).toBe(5);
+});
+
 test("bridges with Result", async () => {
   expect((await EitherPromise.fromResult(ok<number, string>(5))).unwrapMain()).toBe(5);
   expect((await EitherPromise.fromResult(Promise.resolve(err<string, number>("e")))).unwrapAlt()).toBe("e");

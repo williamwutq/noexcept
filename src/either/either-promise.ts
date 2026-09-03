@@ -57,6 +57,25 @@ export class EitherPromise<T, A> implements PromiseLike<Either<T, A>> {
     return new EitherPromise(Promise.resolve(mkAlt<A, T>(alternative)));
   }
 
+  /**
+   * Choose between two already-started values by a `condition` that depends on
+   * neither: `true` takes `left` as the main side, `false` takes `right` as the
+   * alternative. `left` and `right` may each be a value or a promise; both are
+   * evaluated before the call (neither is a thunk), and only the chosen side is
+   * awaited for the result.
+   */
+  static select<T, A>(
+    condition: boolean,
+    left: T | Promise<T>,
+    right: A | Promise<A>,
+  ): EitherPromise<T, A> {
+    return new EitherPromise(
+      condition
+        ? Promise.resolve(left).then((value) => mkMain<T, A>(value))
+        : Promise.resolve(right).then((alternative) => mkAlt<A, T>(alternative)),
+    );
+  }
+
   /** Swap the two sides — the free-function form of {@link EitherPromise.flip}. */
   static flip<T, A>(either: EitherPromise<T, A>): EitherPromise<A, T> {
     return either.flip();
