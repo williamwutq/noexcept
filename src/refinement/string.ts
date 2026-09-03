@@ -34,3 +34,16 @@ export const NonEmptyString = Object.freeze({
     return text.length > 0 ? (text as NonEmptyString) : null;
   },
 });
+
+/**
+ * A non-empty error message: a `string` (never an object), never empty. Same
+ * runtime shape as {@link NonEmptyString}, branded distinctly to mark an error
+ * message rather than an arbitrary non-empty string.
+ */
+export type ErrorString = Brand<string, "ErrorString">;
+
+/** The {@link ErrorString} refinement. */
+export const ErrorString = Refinement.of(
+  (value: unknown): value is ErrorString => typeof value === "string" && value.length > 0,
+  "error string",
+);

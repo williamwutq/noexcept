@@ -57,5 +57,5 @@ export type {
 } from "./refinement/numeric";
 
 // Refined string & array types.
-export { NonEmptyString } from "./refinement/string";
+export { NonEmptyString, ErrorString } from "./refinement/string";
 export { NonEmptyArray } from "./refinement/array";
