@@ -33,12 +33,16 @@ export { ResultPromise } from "./result/result-promise";
 export { Either, Main, Alt, main, alt } from "./either/either";
 export { EitherPromise } from "./either/either-promise";
 
+// Tagged error objects, for discriminated error unions.
+export { errorObject } from "./error/error";
+export type { ErrorObject } from "./error/error";
+
 // Nominal branding.
 export type { Brand, Unbrand } from "./refinement/nominal";
 
 // Refinement machinery — the `is` trait, its derived parser, and combinators.
 export { Refinement } from "./refinement/guard";
-export type { Guard, Spec, Issue } from "./refinement/guard";
+export type { Guard, Spec, Issue, Infer } from "./refinement/guard";
 export { Default } from "./refinement/default";
 export type { Defaulted } from "./refinement/default";
 export { Primitives } from "./refinement/primitives";

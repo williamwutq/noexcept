@@ -23,3 +23,12 @@ test("ErrorString: a non-empty string, never an object", () => {
   expect(ErrorString.parse("")).toBe(null);
   expect(ErrorString.decode(1).unwrapErr()).toEqual([{ path: [], message: "expected error string" }]);
 });
+
+test("ErrorString.from coerces anything to a non-empty error string", () => {
+  expect(ErrorString.from("boom")).toBe("boom" as never);
+  expect(ErrorString.from(new Error("kaboom"))).toBe("kaboom" as never);
+  expect(ErrorString.from("")).toBe("unknown error" as never);
+  expect(ErrorString.from(42)).toBe("42" as never);
+  // still a full refinement:
+  expect(ErrorString.is("x")).toBe(true);
+});

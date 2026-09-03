@@ -87,6 +87,9 @@ export interface Refinement<T> {
 /** Anything that yields a guard: a bare {@link Guard}, or a {@link Refinement}. */
 export type Spec<T> = Guard<T> | Refinement<T>;
 
+/** The type a {@link Refinement} refines — `Infer<typeof User>`. */
+export type Infer<R> = R extends Refinement<infer T> ? T : never;
+
 /**
  * Build a refinement from its guard and label, with an optional structural
  * `check` (leaves fall back to a single issue).

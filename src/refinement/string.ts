@@ -7,6 +7,7 @@
 import type { Brand } from "./nominal";
 import type { Option } from "../core/option";
 import { Refinement } from "./guard";
+import { parseError } from "../result/result";
 
 /**
  * A string of length at least 1. A {@link Refinement}, so it composes — e.g.
@@ -42,8 +43,22 @@ export const NonEmptyString = Object.freeze({
  */
 export type ErrorString = Brand<string, "ErrorString">;
 
-/** The {@link ErrorString} refinement. */
-export const ErrorString = Refinement.of(
+const errorStringRefinement = Refinement.of(
   (value: unknown): value is ErrorString => typeof value === "string" && value.length > 0,
   "error string",
 );
+
+/** The {@link ErrorString} refinement, plus {@link ErrorString.from}. */
+export const ErrorString = Object.freeze({
+  ...errorStringRefinement,
+
+  /**
+   * Coerce any value into a non-empty {@link ErrorString}, never failing. An
+   * `Error` yields its message; anything else is described via
+   * {@link Result.parseError}; an empty result falls back to `"unknown error"`.
+   */
+  from: (value: unknown): ErrorString => {
+    const message = parseError(value).message;
+    return (message.length > 0 ? message : "unknown error") as ErrorString;
+  },
+});
