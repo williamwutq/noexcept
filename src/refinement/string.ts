@@ -4,10 +4,10 @@
  * @module refinement/string
  */
 
-import type { Brand } from "./nominal";
-import type { Option } from "../core/option";
-import { Refinement } from "./guard";
-import { parseError } from "../result/result";
+import type { Brand } from "./nominal.js";
+import type { Option } from "../core/option.js";
+import { Refinement } from "./guard.js";
+import { parseError } from "../result/result.js";
 
 /**
  * A string of length at least 1. A {@link Refinement}, so it composes — e.g.

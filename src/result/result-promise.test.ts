@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
-import { ResultPromise } from "./result-promise";
-import { ok, err, type Result } from "./result";
+import { ResultPromise } from "./result-promise.js";
+import { ok, err, type Result } from "./result.js";
 
 test("ResultPromise.ok / ResultPromise.err are awaitable to a Result", async () => {
   const good = await ResultPromise.ok<number, string>(42);

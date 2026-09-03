@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { NonEmptyString, ErrorString } from "./string";
+import { NonEmptyString, ErrorString } from "./string.js";
 
 test("parse / is", () => {
   expect(NonEmptyString.parse("")).toBe(null);

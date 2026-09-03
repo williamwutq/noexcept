@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
-import { AbsentPromise } from "./absent-promise";
-import type { Absent } from "./absent";
+import { AbsentPromise } from "./absent-promise.js";
+import type { Absent } from "./absent.js";
 
 const present = (n: number): AbsentPromise<number> => Promise.resolve(n as Absent<number>);
 const absent = (): AbsentPromise<number> => Promise.resolve(null as Absent<number>);

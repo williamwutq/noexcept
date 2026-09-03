@@ -9,10 +9,10 @@
  * @author William Wu
  */
 
-import type { Option } from "../core/option";
-import type { Result } from "../result/result";
-import { ResultPromise } from "../result/result-promise";
-import { main as mkMain, alt as mkAlt, type Either } from "./either";
+import type { Option } from "../core/option.js";
+import type { Result } from "../result/result.js";
+import { ResultPromise } from "../result/result-promise.js";
+import { main as mkMain, alt as mkAlt, type Either } from "./either.js";
 
 /** Anything that settles to an {@link Either} — the input a chain step may return. */
 type Awaitable<T, A> = Either<T, A> | EitherPromise<T, A> | Promise<Either<T, A>>;

@@ -13,8 +13,8 @@
  * @see Absent for `T | null | undefined`
  */
 
-import type { Maybe } from "./maybe";
-import { ok, err, type Result } from "../result/result";
+import type { Maybe } from "./maybe.js";
+import { ok, err, type Result } from "../result/result.js";
 
 /**
  * Either a value of type `T`, or `null` for its absence.

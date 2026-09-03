@@ -42,10 +42,10 @@
  * @author William Wu
  */
 
-import type { Option } from "../core/option";
-import type { Brand } from "./nominal";
-import type { NonEmptyArray } from "./array";
-import { ok, err, type Result } from "../result/result";
+import type { Option } from "../core/option.js";
+import type { Brand } from "./nominal.js";
+import type { NonEmptyArray } from "./array.js";
+import { ok, err, type Result } from "../result/result.js";
 
 /**
  * The trait: a type guard over `unknown`. Provide this; the parser derives.

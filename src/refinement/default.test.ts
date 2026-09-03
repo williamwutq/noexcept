@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
-import { Default } from "./default";
-import { Refinement, type Guard } from "./guard";
+import { Default } from "./default.js";
+import { Refinement, type Guard } from "./guard.js";
 
 const isNumber: Guard<number> = (v): v is number => typeof v === "number";
 const NonEmptyString = Refinement.brand<"NonEmptyString", string>(

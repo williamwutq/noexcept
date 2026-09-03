@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test";
-import { Primitives } from "./primitives";
-import { Refinement } from "./guard";
-import { Default } from "./default";
+import { Primitives } from "./primitives.js";
+import { Refinement } from "./guard.js";
+import { Default } from "./default.js";
 
 test("String / Number / Boolean guards and defaults", () => {
   expect(Primitives.String.is("x")).toBe(true);

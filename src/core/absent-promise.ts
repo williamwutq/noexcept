@@ -7,10 +7,10 @@
  * @module core/absent-promise
  */
 
-import { Absent } from "./absent";
-import type { OptionPromise } from "./option-promise";
-import type { MaybePromise } from "./maybe-promise";
-import { ResultPromise } from "../result/result-promise";
+import { Absent } from "./absent.js";
+import type { OptionPromise } from "./option-promise.js";
+import type { MaybePromise } from "./maybe-promise.js";
+import { ResultPromise } from "../result/result-promise.js";
 
 /**
  * A promise of an {@link Absent} — the async form of `T | null | undefined`.

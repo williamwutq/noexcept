@@ -10,7 +10,7 @@
  * @author William Wu
  */
 
-import type { ErrorString } from "../refinement/string";
+import type { ErrorString } from "../refinement/string.js";
 
 /**
  * A tagged error: the `kind` discriminant, an {@link ErrorString} `message`, and

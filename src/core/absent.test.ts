@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { Absent } from "./absent";
+import { Absent } from "./absent.js";
 
 test("presence collapses both flavours of absence", () => {
   expect(Absent.isPresent(0)).toBe(true);

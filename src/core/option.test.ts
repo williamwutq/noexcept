@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { Option } from "./option";
+import { Option } from "./option.js";
 
 test("some / none / guards", () => {
   expect(Option.isSome(Option.some(42))).toBe(true);

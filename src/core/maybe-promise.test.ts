@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { MaybePromise } from "./maybe-promise";
+import { MaybePromise } from "./maybe-promise.js";
 
 test("some / none / fromValue", async () => {
   expect(await MaybePromise.some(42)).toBe(42);

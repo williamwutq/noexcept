@@ -11,8 +11,8 @@
  * @author William Wu
  */
 
-import { Refinement } from "./guard";
-import { Default } from "./default";
+import { Refinement } from "./guard.js";
+import { Default } from "./default.js";
 
 /** Refinements for the built-in types. */
 export const Primitives = Object.freeze({

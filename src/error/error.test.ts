@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test";
-import { errorObject, type ErrorObject } from "./error";
-import { ErrorString } from "../refinement/string";
-import type { Issue } from "../refinement/guard";
+import { errorObject, type ErrorObject } from "./error.js";
+import { ErrorString } from "../refinement/string.js";
+import type { Issue } from "../refinement/guard.js";
 
 type ParseFailure =
   | ErrorObject<"invalid-json">

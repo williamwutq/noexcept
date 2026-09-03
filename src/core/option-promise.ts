@@ -19,10 +19,10 @@
  * @module core/option-promise
  */
 
-import { Option } from "./option";
-import type { Maybe } from "./maybe";
-import type { MaybePromise } from "./maybe-promise";
-import { ResultPromise } from "../result/result-promise";
+import { Option } from "./option.js";
+import type { Maybe } from "./maybe.js";
+import type { MaybePromise } from "./maybe-promise.js";
+import { ResultPromise } from "../result/result-promise.js";
 
 /**
  * A promise of an {@link Option} — the async form of `T | null`.

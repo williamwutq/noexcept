@@ -10,8 +10,8 @@
  * @see Absent for `T | null | undefined`
  */
 
-import type { Option } from "./option";
-import { ok, err, type Result } from "../result/result";
+import type { Option } from "./option.js";
+import { ok, err, type Result } from "../result/result.js";
 
 /**
  * Either a value of type `T`, or `undefined` for its absence.

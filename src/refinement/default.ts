@@ -16,8 +16,8 @@
  * @author William Wu
  */
 
-import type { Option } from "../core/option";
-import { Refinement } from "./guard";
+import type { Option } from "../core/option.js";
+import { Refinement } from "./guard.js";
 
 /**
  * A {@link Refinement} that also carries a canonical starting value.

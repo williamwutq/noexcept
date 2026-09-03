@@ -4,7 +4,7 @@
  * @module refinement/array
  */
 
-import type { Option } from "../core/option";
+import type { Option } from "../core/option.js";
 
 /**
  * An array with at least one element, expressed structurally as `[T, ...T[]]`

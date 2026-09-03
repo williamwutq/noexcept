@@ -13,8 +13,8 @@
  * @author William Wu
  */
 
-import type { Option } from "../core/option";
-import { ok, err, type Result } from "../result/result";
+import type { Option } from "../core/option.js";
+import { ok, err, type Result } from "../result/result.js";
 
 /**
  * Base class for {@link Main} and {@link Alt}. Methods are defined once here in

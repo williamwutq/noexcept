@@ -35,7 +35,7 @@ chain.
 `undefined` stay distinct; `Absent` covers both, for an input that uses either.
 
 ```ts
-import { Option, Maybe } from "noexcept";
+import { Option, Maybe } from "@williamwutq/noexcept";
 
 const port = Option.map(readPort(), (p) => p + 1); // number | null; unchanged when null
 const name = Option.unwrapOr(findName(id), "anonymous");
@@ -56,7 +56,7 @@ to `Result` (`okOr`). Their async twins (`OptionPromise` etc.) are
 fallible steps composes, and `E` widens to the union of every step's error type.
 
 ```ts
-import { ok, err, Result } from "noexcept";
+import { ok, err, Result } from "@williamwutq/noexcept";
 
 function parsePort(text: string): Result<number, "not-a-number" | "out-of-range"> {
   const n = Number(text);
@@ -93,7 +93,7 @@ const items = await ResultPromise.fromPromise(fetch(url), toError)
 a symmetric pair, and `flip` swaps the sides.
 
 ```ts
-import { main, alt, Either } from "noexcept";
+import { main, alt, Either } from "@williamwutq/noexcept";
 
 main<number, string>(1).map((n) => n + 1);   // work the main side
 alt<string, number>("x").mapAlt((s) => s.length);   // work the alternative side
@@ -127,7 +127,7 @@ the type is branded, `is` narrows to the branded type, so the check cannot be
 skipped.
 
 ```ts
-import { Integer, NonEmptyString, Primitives, Refinement, type Infer } from "noexcept";
+import { Integer, NonEmptyString, Primitives, Refinement, type Infer } from "@williamwutq/noexcept";
 
 const User = Refinement.shape({
   name: NonEmptyString,
@@ -171,7 +171,7 @@ Build a discriminated error union without the boilerplate. Each variant carries 
 `string`.
 
 ```ts
-import { errorObject, ErrorString, type ErrorObject } from "noexcept";
+import { errorObject, ErrorString, type ErrorObject } from "@williamwutq/noexcept";
 
 type ParseFailure =
   | ErrorObject<"invalid-json">

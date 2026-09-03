@@ -1,7 +1,7 @@
 import { test, expect } from "bun:test";
-import { EitherPromise } from "./either-promise";
-import { main, alt } from "./either";
-import { ok, err } from "../result/result";
+import { EitherPromise } from "./either-promise.js";
+import { main, alt } from "./either.js";
+import { ok, err } from "../result/result.js";
 
 test("main / alt are awaitable to an Either", async () => {
   const m = await EitherPromise.main<number, string>(42);

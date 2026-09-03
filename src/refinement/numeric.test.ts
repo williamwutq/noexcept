@@ -12,9 +12,9 @@ import {
   type IntegerBelow,
   type IntegerRange,
   type PositiveIntegerUpTo,
-} from "./numeric";
-import { Refinement } from "./guard";
-import { Default } from "./default";
+} from "./numeric.js";
+import { Refinement } from "./guard.js";
+import { Default } from "./default.js";
 
 // A refined value is still a `number` at runtime; drop the brand for equality.
 const raw = (value: number | null): number | null => value;

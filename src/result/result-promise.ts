@@ -17,9 +17,9 @@
  * @author William Wu
  */
 
-import type { Option } from "../core/option";
-import type { Maybe } from "../core/maybe";
-import { ok, err, parseError, ResultBase, type Result, type Ok, type Err } from "./result";
+import type { Option } from "../core/option.js";
+import type { Maybe } from "../core/maybe.js";
+import { ok, err, parseError, ResultBase, type Result, type Ok, type Err } from "./result.js";
 
 /** Anything that settles to a {@link Result} — the input a chain step may return. */
 export type Awaitable<T, E> = Result<T, E> | ResultPromise<T, E> | Promise<Result<T, E>>;

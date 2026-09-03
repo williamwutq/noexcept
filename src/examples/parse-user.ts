@@ -26,7 +26,7 @@ import {
   type Issue,
   type Infer,
   type Brand,
-} from "../index";
+} from "../index.js";
 
 /* -------------------------------------------------------------------------- */
 /*  1. Type construction — build the domain type out of refinements            */

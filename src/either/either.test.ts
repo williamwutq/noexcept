@@ -1,6 +1,6 @@
 import { test, expect } from "bun:test";
-import { Either, main, alt, Main, Alt } from "./either";
-import { ok, err } from "../result/result";
+import { Either, main, alt, Main, Alt } from "./either.js";
+import { ok, err } from "../result/result.js";
 
 test("main / alt construct the right side and narrow", () => {
   const m = main<number, string>(42);

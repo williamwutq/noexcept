@@ -21,9 +21,9 @@
  * @author William Wu
  */
 
-import type { Option } from "../core/option";
-import type { Maybe } from "../core/maybe";
-import { ResultPromise } from "./result-promise";
+import type { Option } from "../core/option.js";
+import type { Maybe } from "../core/maybe.js";
+import { ResultPromise } from "./result-promise.js";
 
 /**
  * Coerce an unknown thrown value into an `Error`; the default error mapper for

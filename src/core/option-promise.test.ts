@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { OptionPromise } from "./option-promise";
+import { OptionPromise } from "./option-promise.js";
 
 test("some / none / fromValue", async () => {
   expect(await OptionPromise.some(42)).toBe(42);

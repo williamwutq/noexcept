@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { NonEmptyArray } from "./array";
+import { NonEmptyArray } from "./array.js";
 
 test("parse / is", () => {
   expect(NonEmptyArray.is([])).toBe(false);

@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { Maybe } from "./maybe";
+import { Maybe } from "./maybe.js";
 
 test("some / none / guards", () => {
   expect(Maybe.isSome(Maybe.some(1))).toBe(true);

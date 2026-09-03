@@ -7,10 +7,10 @@
  * @module core/maybe-promise
  */
 
-import { Maybe } from "./maybe";
-import type { Option } from "./option";
-import type { OptionPromise } from "./option-promise";
-import { ResultPromise } from "../result/result-promise";
+import { Maybe } from "./maybe.js";
+import type { Option } from "./option.js";
+import type { OptionPromise } from "./option-promise.js";
+import { ResultPromise } from "../result/result-promise.js";
 
 /**
  * A promise of a {@link Maybe} — the async form of `T | undefined`.

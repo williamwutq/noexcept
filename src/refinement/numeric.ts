@@ -14,9 +14,9 @@
  * @module refinement/numeric
  */
 
-import type { Brand } from "./nominal";
-import { Refinement } from "./guard";
-import { Default } from "./default";
+import type { Brand } from "./nominal.js";
+import { Refinement } from "./guard.js";
+import { Default } from "./default.js";
 
 /* -------------------------------------------------------------------------- */
 /*  Branded runtime refinements                                               */

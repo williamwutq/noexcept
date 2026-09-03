@@ -1,8 +1,8 @@
 import { test, expect } from "bun:test";
-import { Refinement, type Guard } from "./guard";
-import type { Brand } from "./nominal";
-import { Primitives } from "./primitives";
-import { Integer } from "./numeric";
+import { Refinement, type Guard } from "./guard.js";
+import type { Brand } from "./nominal.js";
+import { Primitives } from "./primitives.js";
+import { Integer } from "./numeric.js";
 
 test("of derives parse from is (non-transformative)", () => {
   const isString: Guard<string> = (v): v is string => typeof v === "string";

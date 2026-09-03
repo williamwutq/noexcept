@@ -11,9 +11,9 @@
  * @module core/absent
  */
 
-import type { Option } from "./option";
-import type { Maybe } from "./maybe";
-import { ok, err, type Result } from "../result/result";
+import type { Option } from "./option.js";
+import type { Maybe } from "./maybe.js";
+import { ok, err, type Result } from "../result/result.js";
 
 /**
  * A value of type `T`, or either flavour of absence.

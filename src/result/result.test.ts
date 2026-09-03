@@ -1,5 +1,5 @@
 import { test, expect } from "bun:test";
-import { Result, ok, err, Ok, Err } from "./result";
+import { Result, ok, err, Ok, Err } from "./result.js";
 
 test("ok / err construct the right variant and narrow", () => {
   const good = ok<number, string>(42);
