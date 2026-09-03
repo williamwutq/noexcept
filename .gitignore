@@ -1,0 +1,12 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Bun
+bun.lockb
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.log
