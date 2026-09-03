@@ -83,17 +83,33 @@ Each converts to the other and to `Option`/`Maybe`: `result.toOption()`,
 
 ### Refinement types
 
-Types that record a runtime check. The branded types refine a runtime value:
+A refinement is a `{ is, parse }` pair over `unknown`. You provide `is` (a
+TypeScript type guard); `parse` is derived as `is(value) ? value : null`. Where
+the type is branded, `is` narrows to the branded type, so the check cannot be
+skipped.
 
 ```ts
-import { Integer, PositiveInteger, NonEmptyString, NonEmptyArray } from "noexcept";
+import { Integer, PositiveInteger, NonEmptyString, Primitives, Refinement } from "noexcept";
 
-Integer.parse(3.5);             // null
-PositiveInteger.parse(1);       // 1, typed as PositiveInteger
-NonEmptyString.trimmed("  a "); // "a", or null when only whitespace
+Integer.parse(3.5);       // null (input is unknown; non-integers and non-numbers fail)
+PositiveInteger.parse(1); // 1, typed as PositiveInteger
+NonEmptyString.is("");    // false
 
-const first = NonEmptyArray.head(list); // return type is T, not T | undefined
+// Built-in leaves (Primitives), and combinators that compose them:
+const User = Refinement.shape({
+  name: NonEmptyString,
+  age: Integer,
+  tags: Refinement.array(Primitives.String),
+});
+User.is(json); // narrows json to { name: NonEmptyString; age: Integer; tags: string[] }
 ```
+
+`Refinement.of` / `brand` / `and` / `or` / `array` / `nonEmptyArray` / `shape` /
+`nullable` / `optional` / `literal` / `matches` / `instanceOf` all build
+refinements. `Primitives` covers `String`, `Number`, `Boolean`, `Object`,
+`Array`, `Function`. `Default` is a separate opt-in trait for a canonical
+starting value (`Default.of(Integer)` is `0`; `Default.option`/`Default.list`
+supply `null`/`[]`).
 
 The literal types refine a numeric literal at compile time, with no runtime
 cost:
