@@ -103,3 +103,13 @@ test("Either.is", () => {
   expect(Either.is(alt(1))).toBe(true);
   expect(Either.is({ value: 1 })).toBe(false);
 });
+
+test("Either toJSON / fromJSON round-trip", () => {
+  expect(JSON.stringify(main(1))).toBe('{"main":true,"value":1}');
+  expect(JSON.stringify(alt("x"))).toBe('{"main":false,"alternative":"x"}');
+
+  expect(Either.fromJSON(JSON.parse(JSON.stringify(main(42))))?.unwrapMain()).toBe(42);
+  expect(Either.fromJSON(JSON.parse(JSON.stringify(alt("e"))))?.unwrapAlt()).toBe("e");
+  expect(Either.fromJSON({ main: false, alternative: 7 })?.unwrapAlt()).toBe(7);
+  expect(Either.fromJSON({ nope: 1 })).toBe(null);
+});

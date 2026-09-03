@@ -206,3 +206,19 @@ test("Result.safeTry chains and short-circuits on the first error", () => {
   });
   expect(neg.unwrapErr()).toBe("neg");
 });
+
+test("Result toJSON / fromJSON round-trip", () => {
+  expect(JSON.stringify(ok(1))).toBe('{"ok":true,"value":1}');
+  expect(JSON.stringify(err("boom"))).toBe('{"ok":false,"error":"boom"}');
+
+  const roundTrip = <T, E>(r: Result<T, E>): Option<Result<unknown, unknown>> =>
+    Result.fromJSON(JSON.parse(JSON.stringify(r)));
+  expect(roundTrip(ok(42))?.unwrap()).toBe(42);
+  expect(roundTrip(err("nope"))?.unwrapErr()).toBe("nope");
+
+  expect(Result.fromJSON({ ok: true, value: 5 })?.unwrap()).toBe(5);
+  expect(Result.fromJSON({ nope: 1 })).toBe(null);
+  expect(Result.fromJSON("x")).toBe(null);
+});
+
+type Option<T> = T | null;

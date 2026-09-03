@@ -161,6 +161,18 @@ export abstract class EitherBase<T, A> {
       (alternative) => err(alternative),
     );
   }
+
+  /**
+   * A plain, JSON-safe tagged object — `{ main: true, value }` or
+   * `{ main: false, alternative }`. Called automatically by `JSON.stringify`;
+   * reconstruct with {@link Either.fromJSON}.
+   */
+  toJSON(): { main: true; value: T } | { main: false; alternative: A } {
+    return this.match<{ main: true; value: T }, { main: false; alternative: A }>(
+      (value) => ({ main: true, value }),
+      (alternative) => ({ main: false, alternative }),
+    );
+  }
 }
 
 /**
@@ -264,4 +276,15 @@ export const Either = Object.freeze({
   /** Adopt a {@link Result}: `Ok` becomes the main side, `Err` the alternative. */
   fromResult: <T, E>(result: Result<T, E>): Either<T, E> =>
     result.isOk() ? main(result.value) : alt(result.error),
+
+  /**
+   * Reconstruct an `Either` from the tagged object {@link EitherBase.toJSON}
+   * produces. Returns `null` if the shape is wrong.
+   */
+  fromJSON: (value: unknown): Option<Either<unknown, unknown>> => {
+    if (value === null || typeof value !== "object") return null;
+    const record = value as Record<string, unknown>;
+    if (typeof record["main"] !== "boolean") return null;
+    return record["main"] ? main(record["value"]) : alt(record["alternative"]);
+  },
 });

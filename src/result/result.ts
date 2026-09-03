@@ -270,6 +270,18 @@ export abstract class ResultBase<T, E> {
     }
     return (this as unknown as Ok<T, E>).value;
   }
+
+  /**
+   * A plain, JSON-safe tagged object — `{ ok: true, value }` or
+   * `{ ok: false, error }`. Called automatically by `JSON.stringify`; reconstruct
+   * with {@link Result.fromJSON}.
+   */
+  toJSON(): { ok: true; value: T } | { ok: false; error: E } {
+    return this.match<{ ok: true; value: T }, { ok: false; error: E }>(
+      (value) => ({ ok: true, value }),
+      (error) => ({ ok: false, error }),
+    );
+  }
 }
 
 /**
@@ -358,6 +370,17 @@ export const Result = Object.freeze({
    */
   safeTry<T, E>(block: () => Generator<Result<never, E>, Result<T, E>>): Result<T, E> {
     return block().next().value;
+  },
+
+  /**
+   * Reconstruct a `Result` from the tagged object {@link ResultBase.toJSON}
+   * produces (e.g. `JSON.parse`d back). Returns `null` if the shape is wrong.
+   */
+  fromJSON: (value: unknown): Option<Result<unknown, unknown>> => {
+    if (value === null || typeof value !== "object") return null;
+    const record = value as Record<string, unknown>;
+    if (typeof record["ok"] !== "boolean") return null;
+    return record["ok"] ? ok(record["value"]) : err(record["error"]);
   },
 
   /** {@link parseError} — coerce an unknown thrown value into an `Error`. */
