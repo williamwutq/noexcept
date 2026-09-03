@@ -7,10 +7,10 @@ test("some / none / guards", () => {
   expect(Maybe.isSome(null)).toBe(true); // null is present; only undefined is absent
 });
 
-test("map / flatMap / unwrap", () => {
+test("map / andThen / unwrap", () => {
   expect(Maybe.map(21, (n) => n * 2)).toBe(42);
   expect(Maybe.map(undefined as Maybe<number>, (n) => n * 2)).toBeUndefined();
-  expect(Maybe.flatMap(4, (n) => (n > 0 ? n : undefined))).toBe(4);
+  expect(Maybe.andThen(4, (n) => (n > 0 ? n : undefined))).toBe(4);
   expect(Maybe.unwrapOr(undefined as Maybe<number>, 7)).toBe(7);
   expect(() => Maybe.unwrap(undefined as Maybe<number>)).toThrow();
 });
@@ -18,4 +18,23 @@ test("map / flatMap / unwrap", () => {
 test("bridge to Option", () => {
   expect(Maybe.toOption(undefined as Maybe<number>)).toBe(null);
   expect(Maybe.fromOption(null as number | null)).toBeUndefined();
+});
+
+test("mirrored combinators", () => {
+  expect(Maybe.isSomeAnd(4, (n) => n > 0)).toBe(true);
+  expect(Maybe.orElse(undefined as Maybe<number>, () => 5)).toBe(5);
+  expect(Maybe.mapOrElse(undefined as Maybe<number>, () => "none", (n) => `some:${n}`)).toBe("none");
+  expect(Maybe.xor(1, undefined as Maybe<number>)).toBe(1);
+  expect(Maybe.zipWith(2, 3, (a, b) => a + b)).toBe(5);
+  expect(Maybe.filterSome([1, undefined, 3])).toEqual([1, 3]);
+  expect(Maybe.all([1, 2])).toEqual([1, 2]);
+  expect(Maybe.all([1, undefined])).toBeUndefined();
+  expect(Maybe.firstSome([undefined, 3])).toBe(3);
+});
+
+test("construction & Result bridge", () => {
+  expect(Maybe.fromNullable<number>(null)).toBeUndefined();
+  expect(Maybe.fromPredicate(5, (n) => n > 0)).toBe(5);
+  expect(Maybe.okOr(5, "absent").unwrap()).toBe(5);
+  expect(Maybe.okOr(undefined as Maybe<number>, "absent").unwrapErr()).toBe("absent");
 });
