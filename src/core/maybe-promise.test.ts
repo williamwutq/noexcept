@@ -32,3 +32,17 @@ test("bridges: okOr / toOption", async () => {
   expect((await MaybePromise.okOr(MaybePromise.none, "absent")).unwrapErr()).toBe("absent");
   expect(await MaybePromise.toOption(MaybePromise.none)).toBe(null);
 });
+
+test("MaybePromise.safeTry short-circuits on undefined", async () => {
+  const good = await MaybePromise.safeTry(async function* () {
+    const a = yield* MaybePromise.safeUnwrap(MaybePromise.some(2));
+    return a + 1;
+  });
+  expect(good).toBe(3);
+
+  const none = await MaybePromise.safeTry(async function* () {
+    yield* MaybePromise.safeUnwrap(MaybePromise.none); // short-circuits; the rest is unreachable
+    return 99;
+  });
+  expect(none).toBeUndefined();
+});

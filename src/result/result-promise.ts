@@ -19,7 +19,7 @@
 
 import type { Option } from "../core/option";
 import type { Maybe } from "../core/maybe";
-import { ok, err, parseError, ResultBase, type Result } from "./result";
+import { ok, err, parseError, ResultBase, type Result, type Ok, type Err } from "./result";
 
 /** Anything that settles to a {@link Result} — the input a chain step may return. */
 export type Awaitable<T, E> = Result<T, E> | ResultPromise<T, E> | Promise<Result<T, E>>;
@@ -174,6 +174,25 @@ export class ResultPromise<T, E> implements PromiseLike<Result<T, E>> {
       : ResultPromise.err(result.error);
   }
 
+  /**
+   * Async do-notation. In an `async function*` block, each `yield* step`
+   * evaluates to the step's value, or short-circuits the whole block to the
+   * first error; the block returns the final `Result` (or `ResultPromise`). Both
+   * a `ResultPromise` and a synchronous `Result` may be `yield*`-ed.
+   *
+   * @example
+   * const r = await ResultPromise.safeTry(async function* () {
+   *   const a = yield* fetchUser(id);        // ResultPromise<User, HttpError>
+   *   const b = yield* parseProfile(a);       // Result<Profile, ParseError>
+   *   return ok({ ...a, ...b });
+   * });
+   */
+  static safeTry<T, E>(
+    block: () => AsyncGenerator<Result<never, E>, Result<T, E> | ResultPromise<T, E>>,
+  ): ResultPromise<T, E> {
+    return new ResultPromise((async (): Promise<Result<T, E>> => (await block().next()).value)());
+  }
+
   /** Variadic {@link ResultPromise.all} — the inputs are the arguments. */
   static allResults<T, E>(...items: ReadonlyArray<Awaitable<T, E>>): ResultPromise<Array<T>, E> {
     return ResultPromise.all(items);
@@ -273,6 +292,19 @@ export class ResultPromise<T, E> implements PromiseLike<Result<T, E>> {
     onrejected?: ((reason: unknown) => B | PromiseLike<B>) | null,
   ): PromiseLike<A | B> {
     return this.#inner.then(onfulfilled, onrejected);
+  }
+
+  /**
+   * Async iterator support for {@link ResultPromise.safeTry}: `yield* resultPromise`
+   * in an async safeTry block awaits and evaluates to the value on `Ok`, or
+   * short-circuits the block to this error on `Err`.
+   */
+  async *[Symbol.asyncIterator](): AsyncGenerator<Err<never, E>, T> {
+    const result = await this.#inner;
+    if (result.isErr()) {
+      yield result as unknown as Err<never, E>;
+    }
+    return (result as unknown as Ok<T, E>).value;
   }
 
   /* ---------------------------------------------------------------------- */

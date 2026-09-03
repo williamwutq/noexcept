@@ -48,3 +48,21 @@ test("tap resolves to the option unchanged", async () => {
   expect(seen).toBe(8);
   expect(r).toBe(8);
 });
+
+test("OptionPromise.safeTry chains async + sync, short-circuits on none", async () => {
+  const findA = (): OptionPromise<number> => OptionPromise.some(2);
+  const findB = (n: number): OptionPromise<number> => (n > 0 ? OptionPromise.some(n * 10) : OptionPromise.none);
+
+  const good = await OptionPromise.safeTry(async function* () {
+    const a = yield* OptionPromise.safeUnwrap(findA());
+    const b = yield* OptionPromise.safeUnwrap(findB(a));
+    return a + b;
+  });
+  expect(good).toBe(22);
+
+  const none = await OptionPromise.safeTry(async function* () {
+    yield* OptionPromise.safeUnwrap(OptionPromise.none); // short-circuits; the rest is unreachable
+    return 99;
+  });
+  expect(none).toBe(null);
+});

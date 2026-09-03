@@ -201,3 +201,40 @@ test("ported statics: sequenceResults / tryWithParser", async () => {
   }
   expect(caughtMessage).toBe("unexpected");
 });
+
+test("ResultPromise.safeTry mixes async + sync steps and short-circuits", async () => {
+  const parse = (s: string): ResultPromise<number, "nan"> => {
+    const n = Number(s);
+    return Number.isNaN(n) ? ResultPromise.err("nan") : ResultPromise.ok(n);
+  };
+  const positive = (n: number): Result<number, "neg"> => (n > 0 ? ok(n) : err("neg"));
+
+  const good = await ResultPromise.safeTry(async function* () {
+    const a = yield* parse("2"); // ResultPromise
+    const b = yield* positive(a); // sync Result
+    return ok<number, "nan" | "neg">(a + b);
+  });
+  expect(good.unwrap()).toBe(4);
+
+  const nan = await ResultPromise.safeTry(async function* () {
+    const a = yield* parse("x"); // short-circuits here
+    const b = yield* positive(a);
+    return ok<number, "nan" | "neg">(a + b);
+  });
+  expect(nan.unwrapErr()).toBe("nan");
+
+  const neg = await ResultPromise.safeTry(async function* () {
+    const a = yield* parse("-5");
+    const b = yield* positive(a); // short-circuits here
+    return ok<number, "nan" | "neg">(a + b);
+  });
+  expect(neg.unwrapErr()).toBe("neg");
+});
+
+test("ResultPromise.safeTry may return a ResultPromise", async () => {
+  const r = await ResultPromise.safeTry(async function* () {
+    const a = yield* ResultPromise.ok<number, string>(3);
+    return ResultPromise.ok<number, string>(a + 1);
+  });
+  expect(r.unwrap()).toBe(4);
+});

@@ -134,4 +134,28 @@ export const MaybePromise = Object.freeze({
   /** Adopt an {@link OptionPromise}, mapping its `null` absence onto `undefined`. */
   fromOption: <T>(option: Promise<Option<T>>): MaybePromise<T> =>
     option.then((value) => Maybe.fromOption(value)),
+
+  /**
+   * Async iterator step for {@link MaybePromise.safeTry}: in an `async function*`
+   * block, `yield* MaybePromise.safeUnwrap(m)` awaits and evaluates to the value,
+   * or short-circuits the block to `undefined`.
+   */
+  async *safeUnwrap<T>(maybe: MaybePromise<T>): AsyncGenerator<undefined, T> {
+    const settled = await maybe;
+    if (settled === undefined) {
+      yield undefined;
+    }
+    return settled as T;
+  },
+
+  /**
+   * Async do-notation. Each `yield* MaybePromise.safeUnwrap(m)` (or a sync
+   * `yield* Maybe.safeUnwrap(m)`) evaluates to the value, or short-circuits the
+   * block to `undefined`; the block returns the final `Maybe` or `MaybePromise`.
+   */
+  safeTry<T>(
+    block: () => AsyncGenerator<undefined, Maybe<T> | MaybePromise<T>>,
+  ): MaybePromise<T> {
+    return (async (): Promise<Maybe<T>> => (await block().next()).value)();
+  },
 });

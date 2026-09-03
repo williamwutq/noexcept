@@ -115,4 +115,31 @@ export const AbsentPromise = Object.freeze({
   /** Collapse both absences to `undefined` — commit to {@link MaybePromise}. */
   toMaybe: <T>(value: AbsentPromise<T>): MaybePromise<T> =>
     value.then((settled) => Absent.toMaybe(settled)),
+
+  /**
+   * Async iterator step for {@link AbsentPromise.safeTry}: in an `async function*`
+   * block, `yield* AbsentPromise.safeUnwrap(v)` awaits and evaluates to the
+   * value, or short-circuits the block to the absent value.
+   */
+  async *safeUnwrap<T>(value: AbsentPromise<T>): AsyncGenerator<null | undefined, T> {
+    const settled = await value;
+    if (settled === null) {
+      yield null;
+    } else if (settled === undefined) {
+      yield undefined;
+    }
+    return settled as T;
+  },
+
+  /**
+   * Async do-notation. Each `yield* AbsentPromise.safeUnwrap(v)` (or a sync
+   * `yield* Absent.safeUnwrap(v)`) evaluates to the value, or short-circuits the
+   * block to the absent value; the block returns the final `Absent` or
+   * `AbsentPromise`.
+   */
+  safeTry<T>(
+    block: () => AsyncGenerator<null | undefined, Absent<T> | AbsentPromise<T>>,
+  ): AbsentPromise<T> {
+    return (async (): Promise<Absent<T>> => (await block().next()).value)();
+  },
 });

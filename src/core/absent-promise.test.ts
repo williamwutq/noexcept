@@ -33,3 +33,18 @@ test("bridges: okOr / toOption / toMaybe", async () => {
   expect(await AbsentPromise.toOption(absent())).toBe(null);
   expect(await AbsentPromise.toMaybe(absent())).toBeUndefined();
 });
+
+test("AbsentPromise.safeTry short-circuits, preserving which absence", async () => {
+  const good = await AbsentPromise.safeTry(async function* () {
+    const a = yield* AbsentPromise.safeUnwrap(present(2));
+    const b = yield* AbsentPromise.safeUnwrap(present(3));
+    return a + b;
+  });
+  expect(good).toBe(5);
+
+  const viaNull = await AbsentPromise.safeTry(async function* () {
+    const a = yield* AbsentPromise.safeUnwrap(absent());
+    return a + 1;
+  });
+  expect(viaNull).toBe(null);
+});
