@@ -18,7 +18,7 @@
  *
  * ## Validation with error paths
  *
- * `parse` answers `null` without saying why. {@link Refinement.decode} instead
+ * `parse` returns `null` on failure with no detail. {@link Refinement.decode}
  * returns a {@link Result} of the value or a {@link NonEmptyArray} of
  * {@link Issue}s — each an error `message` and the `path` to the value that
  * failed. Structural combinators ({@link Refinement.shape},

@@ -9,7 +9,7 @@ test("of derives parse from is (non-transformative)", () => {
   const Str = Refinement.of(isString);
   expect(Str.is("x")).toBe(true);
   expect(Str.is(1)).toBe(false);
-  expect(Str.parse("x")).toBe("x"); // hands back exactly what it was given
+  expect(Str.parse("x")).toBe("x"); // returns the value unchanged
   expect(Str.parse(1)).toBe(null);
 });
 

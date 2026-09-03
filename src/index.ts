@@ -1,14 +1,18 @@
 /**
  * noexcept — clear error handling and no exceptions, without any exceptions.
  *
- * Two shapes of type live here:
+ * Two representations of an absent-or-failed value:
  *
- *  - **Bare unions.** `Option<T>` is `T | null`, `Maybe<T>` is `T | undefined`.
- *    No wrapper, no cost, interchangeable with the unions the platform already
- *    hands you. Their combinators live in a same-named namespace object.
- *  - **Wrapper classes.** `Result<T, E>` and its async twin `ResultPromise<T, E>`
- *    are objects with fluent methods — `ok(x).map(f).andThen(g).unwrapOr(d)` —
- *    because a pipeline of fallible steps reads better top to bottom than nested.
+ *  - **Bare unions.** `Option<T>` is `T | null`, `Maybe<T>` is `T | undefined`,
+ *    `Absent<T>` is either. No wrapper; combinators live in a same-named
+ *    namespace, each with an async twin (`OptionPromise`, `MaybePromise`,
+ *    `AbsentPromise`).
+ *  - **Wrapper classes.** `Result<T, E>` (a value or an error) and `Either<T, A>`
+ *    (one of two values, neither an error), each a fluent method chain with an
+ *    async twin (`ResultPromise`, `EitherPromise`).
+ *
+ * Plus refinement types (`Refinement`, `Primitives`, branded leaves) that
+ * validate `unknown`, and tagged errors (`ErrorObject`, `ErrorString`).
  *
  * @module noexcept
  * @author William Wu
