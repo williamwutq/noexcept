@@ -52,6 +52,9 @@ export default defineConfig(
       // Test lambdas are often `async` to exercise an async code path even when
       // their body has nothing to await.
       "@typescript-eslint/require-await": "off",
+      // Asserting on an `undefined`-resolving promise (an absent `MaybePromise`,
+      // say) is normal in tests; the value under assertion is the point.
+      "@typescript-eslint/no-confusing-void-expression": "off",
     },
   },
 );
