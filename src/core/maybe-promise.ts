@@ -1,9 +1,8 @@
 /**
- * `MaybePromise<T>` — a {@link Maybe} that has not arrived yet.
+ * `MaybePromise<T>` is `Promise<Maybe<T>>`: the async form of {@link Maybe}.
  *
- * Exactly `Promise<Maybe<T>>`: no wrapper, awaitable straight to `T | undefined`.
- * The async twin of {@link Maybe}'s namespace, and the `undefined`-flavoured
- * counterpart to {@link OptionPromise}.
+ * No wrapper — awaitable to `T | undefined`. The async twin of {@link Maybe}'s
+ * namespace, and the `undefined` counterpart to {@link OptionPromise}.
  *
  * @module core/maybe-promise
  */

@@ -1,15 +1,13 @@
 /**
  * `Either<T, A>` — one of two values, with neither side privileged.
  *
- * It looks like {@link Result}, but it is not {@link Result}: `A` is an
- * *alternative*, not an error. Nothing about the alternative side means
- * "failure", so every operation comes as a symmetric pair — {@link Either.map}
- * works the main side, {@link Either.mapAlt} the alternative; {@link Either.andThen}
- * chains on the main, {@link Either.andThenAlt} on the alternative — and
- * {@link Either.flip} swaps the two outright, turning `Either<T, A>` into
- * `Either<A, T>`. Use it for a value that is genuinely one thing *or* another
- * (a cache hit or a fresh fetch, a parsed date or the raw string it came from),
- * where calling one branch "the error" would be a lie.
+ * Structurally like {@link Result}, but `A` is an *alternative*, not an error,
+ * and nothing short-circuits. Every operation comes as a symmetric pair:
+ * {@link Either.map} / {@link Either.mapAlt} map each side, {@link Either.andThen} /
+ * {@link Either.andThenAlt} chain on each side, and {@link Either.flip} swaps
+ * them, turning `Either<T, A>` into `Either<A, T>`. Use it for a value that is
+ * one of two things (a cache hit or a fresh fetch, a parsed date or its raw
+ * string) where neither is an error.
  *
  * @module either/either
  * @author William Wu
@@ -19,9 +17,9 @@ import type { Option } from "../core/option";
 import { ok, err, type Result } from "../result/result";
 
 /**
- * The shared behaviour of {@link Main} and {@link Alt}. Every method is written
- * once here in terms of {@link EitherBase.match}, the single point where the two
- * sides differ — which is what keeps the two sides symmetric.
+ * Base class for {@link Main} and {@link Alt}. Methods are defined once here in
+ * terms of {@link EitherBase.match}, the only member the two sides implement
+ * differently.
  *
  * @template T The type on the main side.
  * @template A The type on the alternative side.
@@ -153,9 +151,9 @@ export abstract class EitherBase<T, A> {
   }
 
   /**
-   * Read as a {@link Result}, taking the main side as `Ok` and the alternative
-   * as `Err`. This *assigns* a meaning the `Either` did not have — call
-   * {@link EitherBase.flip} first for the other direction.
+   * Convert to a {@link Result}: the main side as `Ok`, the alternative as
+   * `Err`. This imposes an error/success reading; use {@link EitherBase.flip}
+   * first for the reverse mapping.
    */
   toResult(): Result<T, A> {
     return this.match<Result<T, A>, Result<T, A>>(
@@ -214,9 +212,9 @@ export const main = <T, A = never>(value: T): Either<T, A> => new Main(value);
 export const alt = <A, T = never>(alternative: A): Either<T, A> => new Alt(alternative);
 
 /**
- * The `Either` static namespace: constructors' siblings that operate on
- * `Either`s from the outside — the type guard, the free-function {@link Either.flip},
- * the symmetric collection splitters, and the adapter from {@link Result}.
+ * The `Either` static namespace: the type guard, the free-function
+ * {@link Either.flip}, the symmetric collection splitters, and the adapter from
+ * {@link Result}.
  */
 export const Either = Object.freeze({
   main,

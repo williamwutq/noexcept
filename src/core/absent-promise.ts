@@ -1,9 +1,8 @@
 /**
- * `AbsentPromise<T>` — an {@link Absent} that has not arrived yet.
+ * `AbsentPromise<T>` is `Promise<Absent<T>>`: the async form of {@link Absent}.
  *
- * Exactly `Promise<Absent<T>>`: no wrapper, awaitable straight to
- * `T | null | undefined`. The async twin of {@link Absent}'s namespace, for the
- * untrusted edge where a value may be missing either way and has not settled.
+ * No wrapper — awaitable to `T | null | undefined`. The async twin of
+ * {@link Absent}'s namespace.
  *
  * @module core/absent-promise
  */

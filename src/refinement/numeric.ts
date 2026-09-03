@@ -1,21 +1,15 @@
 /**
- * Refined numeric types.
+ * Refined numeric types, in two layers.
  *
- * Two layers live here, and they answer different questions.
+ * The **branded** types ({@link Integer}, {@link PositiveInteger}, …) refine a
+ * runtime value. Each is a {@link Refinement} built on the machinery: an `is`
+ * guard over `unknown`, the `parse` derived from it, and a brand. Being
+ * refinements, they compose — e.g. `Refinement.shape({ age: Integer })`.
  *
- * The **branded** types ({@link Integer}, {@link PositiveInteger}, …) refine an
- * arbitrary runtime value — one you did not write yourself, that arrived from
- * JSON or a form. Each is a {@link Refinement} built on the machinery: an `is`
- * guard over `unknown`, the `parse` derived from it, and a brand so the check
- * cannot be skipped. Being refinements, they compose — `Refinement.shape({ age:
- * Integer })` just works.
- *
- * The **literal** types ({@link IntegerBelow}, {@link IntegerRange}) refine a
- * number the compiler already knows exactly — a literal like `3`. They are
- * pure conditional types that expand to a union of literals, so an out-of-range
- * literal is a compile error with no runtime cost at all. This is the thing
- * plain JavaScript cannot express, and the reason the library is written in
- * TypeScript.
+ * The **literal** types ({@link IntegerBelow}, {@link IntegerRange}) are
+ * conditional types over a numeric literal, evaluated at compile time. They
+ * expand to a union of literals, so an out-of-range literal is a compile error
+ * with no runtime cost.
  *
  * @module refinement/numeric
  */
@@ -34,20 +28,19 @@ export type Integer = Brand<number, "Integer">;
 /** A whole number strictly greater than zero. */
 export type PositiveInteger = Brand<number, "PositiveInteger">;
 
-/** A whole number at or above zero — what every count and length is. */
+/** A whole number at or above zero. */
 export type NonNegativeInteger = Brand<number, "NonNegativeInteger">;
 
 /** A whole number strictly less than zero. */
 export type NegativeInteger = Brand<number, "NegativeInteger">;
 
-/** A whole, finite number — the shared check the four brands narrow from. */
+/** A whole, finite number; the shared check for the four brands. */
 const isInteger = (value: unknown): value is number =>
   typeof value === "number" && Number.isInteger(value);
 
 /**
- * The `Integer` refinement, with a {@link Default} of `0`. A whole number is a
- * count you branch on, not an exception: `Integer.parse` answers `null` for a
- * non-integer, and `Integer.is` narrows an `unknown` to the branded type.
+ * The `Integer` refinement, with a {@link Default} of `0`. `Integer.parse`
+ * returns `null` for a non-integer; `Integer.is` narrows `unknown` to `Integer`.
  */
 export const Integer = Default.impl(
   Refinement.of((value: unknown): value is Integer => isInteger(value)),
@@ -75,12 +68,9 @@ export const NegativeInteger = Refinement.of(
 /* -------------------------------------------------------------------------- */
 
 /**
- * The union `0 | 1 | … | N-1`, built by counting a tuple up to length `N`.
- *
- * This is the primitive the range types are made from. TypeScript caps
- * recursive instantiation, so `N` beyond a few hundred will not expand — these
- * are for the small, known bounds where a literal range is worth stating in the
- * type (an enum's arity, a fixed board size), not for arbitrary arithmetic.
+ * The union `0 | 1 | … | N-1`, built by counting a tuple to length `N`. The
+ * base of the range types below. TypeScript's recursion limit caps `N` at a few
+ * hundred; use these for small fixed bounds, not arbitrary arithmetic.
  *
  * @template N The exclusive upper bound, a literal number type.
  */

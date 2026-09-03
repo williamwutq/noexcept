@@ -2,28 +2,23 @@
  * The refinement machinery: guards, the parsers derived from them, and the
  * combinators that build both.
  *
- * ## The trait is `is`, and `parse` is derived from it
+ * ## `is` is the trait; `parse` is derived
  *
- * A refinement type is a `{ is, parse }` namespace, the same shape crushmatcha's
- * type library uses — but built the other way round. There, `parse` is written
- * and `is` is derived from it. Here the primitive is **`is`**: a real
- * TypeScript type guard, `(value: unknown) => value is T`. Providing one is the
- * whole obligation.
+ * A refinement type is a `{ is, parse }` namespace. The primitive is `is`: a
+ * TypeScript type guard, `(value: unknown) => value is T`. Only `is` must be
+ * provided.
  *
- * `parse` is then derived, because a plain parser is what that library calls a
- * *non-transformative partial constructor* — partial because it may answer
- * `null`, non-transformative because on success it hands back exactly what it
- * was given. That is precisely `is(value) ? value : null`, so it never needs to
- * be written by hand. (A parser that *changes* the value — trimming a string,
- * say — is a different thing, written on its own; it is not derivable and does
- * not live here.)
+ * `parse` is derived as `is(value) ? value : null`: on success it returns the
+ * input unchanged, otherwise `null`. Because it never transforms the value, it
+ * is fully determined by `is` and is not written by hand. A constructor that
+ * *does* transform the value (trimming a string, say) is separate, written on
+ * its own, and is not part of this machinery.
  *
- * Unlike a JavaScript predicate, `is` here narrows to a **branded** type where
- * the refinement is branded, so "only a check produces one" is enforced by the
- * compiler rather than by convention.
+ * Where the refined type is a {@link Brand}, `is` narrows to the branded type,
+ * so the check is enforced at compile time rather than by convention.
  *
  * ## Combinators
- * - {@link Refinement.of} — the derivation: an `is` guard to a full refinement
+ * - {@link Refinement.of} — derive a refinement from an `is` guard
  * - {@link Refinement.brand} — relabel a refinement's output as a {@link Brand}
  * - {@link Refinement.and} / {@link Refinement.or} — intersection / union
  * - {@link Refinement.array} / {@link Refinement.nonEmptyArray} — lists
@@ -54,9 +49,9 @@ export type Guard<T> = (value: unknown) => value is T;
  * @template T The refined type.
  */
 export interface Refinement<T> {
-  /** The type guard: the one thing that had to be provided. */
+  /** The type guard. */
   readonly is: Guard<T>;
-  /** The derived non-transformative partial constructor: `is(v) ? v : null`. */
+  /** The parser derived from `is`: the value when `is` holds, otherwise `null`. */
   readonly parse: (value: unknown) => Option<T>;
 }
 
@@ -67,7 +62,7 @@ export type Spec<T> = Guard<T> | Refinement<T>;
 const guardOf = <T>(spec: Spec<T>): Guard<T> =>
   typeof spec === "function" ? spec : spec.is;
 
-/** Derive the full refinement from its guard. The heart of the module. */
+/** Derive the refinement from its guard. */
 const derive = <T>(is: Guard<T>): Refinement<T> => ({
   is,
   parse: (value: unknown): Option<T> => (is(value) ? value : null),
@@ -90,9 +85,8 @@ export const Refinement = Object.freeze({
 
   /**
    * Relabel a refinement's output as a {@link Brand}. The runtime check is
-   * unchanged; the type now carries proof that the check was run. Both the brand
-   * name and the base type are required — a base of `unknown` would erase the
-   * type the check actually proves.
+   * unchanged; the output type gains the brand. Both the brand name and the base
+   * type are required — a base of `unknown` would erase the checked type.
    *
    * @example
    * const Email = Refinement.brand<"Email", string>(Refinement.matches(/^[^@]+@[^@]+$/));

@@ -7,14 +7,10 @@
 import type { Option } from "../core/option";
 
 /**
- * An array guaranteed to hold at least one element.
- *
- * Expressed structurally as `[T, ...T[]]` rather than with a brand, because the
- * shape carries real power the compiler acts on: with
- * {@link https://www.typescriptlang.org/tsconfig#noUncheckedIndexedAccess noUncheckedIndexedAccess}
- * on, `array[0]` on a plain `T[]` is `T | undefined`, but on a `NonEmptyArray`
- * it is `T`. The type does not merely assert non-emptiness, it hands you the
- * first element without a check.
+ * An array with at least one element, expressed structurally as `[T, ...T[]]`
+ * rather than with a brand. Under
+ * {@link https://www.typescriptlang.org/tsconfig#noUncheckedIndexedAccess noUncheckedIndexedAccess},
+ * `array[0]` is `T` here, versus `T | undefined` on a plain `T[]`.
  *
  * @template T The element type.
  */
@@ -29,9 +25,9 @@ export const NonEmptyArray = Object.freeze({
   parse: <T>(value: Array<T>): Option<NonEmptyArray<T>> =>
     value.length > 0 ? (value as NonEmptyArray<T>) : null,
 
-  /** The guaranteed-present first element of a non-empty array. */
+  /** The first element. */
   head: <T>(value: NonEmptyArray<T>): T => value[0],
 
-  /** Every element after the first — possibly empty. */
+  /** The elements after the first (possibly empty). */
   tail: <T>(value: NonEmptyArray<T>): Array<T> => value.slice(1),
 });

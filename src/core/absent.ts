@@ -1,13 +1,12 @@
 /**
- * `Absent<T>` — a value that may be missing in either of JavaScript's two ways.
+ * `Absent<T>` is `T | null | undefined`: a value that may be missing as either
+ * `null` or `undefined`.
  *
- * Where {@link Option} and {@link Maybe} each commit to one spelling of
- * absence, `Absent` covers both `null` and `undefined` at once. It is the type
- * for the untrusted edge — a parsed JSON field, an optional-and-nullable API
- * value — where you have not yet decided, or cannot decide, which absence you
- * were handed. The guards collapse the two so the rest of your code can go back
- * to caring about just one; most work then continues on {@link Option} or
- * {@link Maybe} after {@link Absent.toOption} / {@link Absent.toMaybe}.
+ * Where {@link Option} and {@link Maybe} fix one form of absence, `Absent`
+ * covers both. Use it for inputs that use either — a parsed JSON field, an
+ * optional-and-nullable API value. The guards collapse the two forms; convert to
+ * {@link Option} or {@link Maybe} with {@link Absent.toOption} /
+ * {@link Absent.toMaybe} to continue on one.
  *
  * @module core/absent
  */

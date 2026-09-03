@@ -1,11 +1,8 @@
 /**
- * `ResultPromise<T, E>` — a `Result` that has not arrived yet.
- *
- * It wraps a `Promise<Result<T, E>>` and is itself awaitable, so `await`ing one
- * gives you a plain {@link Result}. What it adds over a bare promise is the same
- * fluent chain {@link Result} has, lifted into async: `.map`, `.andThen`,
- * `.orElse`, `.match` and friends all work before the value settles, and none
- * of them reject — a failure is carried as an `Err`, never thrown.
+ * `ResultPromise<T, E>` wraps a `Promise<Result<T, E>>` and is itself
+ * awaitable: `await`ing one yields a {@link Result}. It provides the same fluent
+ * methods as {@link Result} (`.map`, `.andThen`, `.orElse`, `.match`, …) before
+ * the value settles, and does not reject — a failure is carried as an `Err`.
  *
  * ```ts
  * ResultPromise.fromPromise(fetch(url), toNetworkError)
@@ -14,7 +11,7 @@
  *   .unwrapOr([]);              // awaited: Promise<Item[]>
  * ```
  *
- * The async counterpart to {@link Result}: every method there has a match here.
+ * The async counterpart to {@link Result}: every method there has one here.
  *
  * @module result/result-promise
  * @author William Wu
@@ -66,9 +63,8 @@ export class ResultPromise<T, E> implements PromiseLike<Result<T, E>> {
   }
 
   /**
-   * Adopt a promise, mapping a rejection into an `Err`. This is the boundary
-   * where a throwing async world becomes an exception-free one. Without
-   * `mapErr` a rejection is coerced via {@link parseError}.
+   * Adopt a promise, mapping a rejection into an `Err`. Without `mapErr` a
+   * rejection is coerced via {@link parseError}.
    */
   static fromPromise<T, E = Error>(
     promise: PromiseLike<T>,

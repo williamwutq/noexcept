@@ -1,11 +1,10 @@
 /**
- * Nominal (branded) typing for TypeScript's structural world.
+ * Nominal (branded) types over TypeScript's structural type system.
  *
- * TypeScript compares types by shape, so a `number` that has been checked to be
- * a whole number is, to the compiler, indistinguishable from one that has not.
- * A brand attaches a phantom tag that exists only at compile time: the runtime
- * value is still a plain `number`, but the type now carries proof that a check
- * was run, and that proof cannot be forged by writing the number out again.
+ * A brand attaches a compile-time-only phantom tag. The runtime value is
+ * unchanged (a branded `number` is still a `number`), but the branded type is
+ * distinct from its base type and is only produced through a guard that asserts
+ * it.
  *
  * @module refinement/nominal
  */
@@ -15,11 +14,9 @@ declare const brand: unique symbol;
 /**
  * `T` tagged with the compile-time-only marker `B`.
  *
- * The intersection adds a property that never exists at runtime, so a `Brand`
- * is assignable *to* its base type for free (a `PositiveInteger` is a `number`)
- * but the base type is not assignable *back* without a check that produces the
- * brand. That asymmetry is the whole point: it is what makes the check
- * unskippable.
+ * The intersection adds a phantom property. A `Brand` is assignable to its base
+ * type (a `PositiveInteger` is a `number`), but the base type is not assignable
+ * to the `Brand` without a guard that asserts it.
  *
  * @template T The underlying runtime type.
  * @template B A unique string literal naming the refinement.

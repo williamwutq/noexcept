@@ -1,11 +1,7 @@
 /**
- * `Result<T, E>` — a value or an error, as a fluent object.
- *
- * A `Result` is always one of two objects: an {@link Ok} carrying a value, or an
- * {@link Err} carrying an error. Unlike {@link Option}, it is a real wrapper,
- * because the thing it wraps — "why did this fail" — has to be carried
- * somewhere, and because the payoff of wrapping is a chain that reads straight
- * down the page:
+ * `Result<T, E>` — a value or an error, as a discriminated union of two wrapper
+ * objects: {@link Ok} holding a value of `T`, or {@link Err} holding an error of
+ * `E`. Unlike {@link Option}, it carries an error value on the failure side.
  *
  * ```ts
  * parseConfig(text)
@@ -14,13 +10,12 @@
  *   .unwrapOr(8080);
  * ```
  *
- * No step throws. Each returns another `Result`, and the error type widens to
- * the union of everything that could have gone wrong, so the compiler knows the
- * full failure surface at the end of the chain.
+ * No method throws. Each returns another `Result`, and chaining widens `E` to
+ * the union of every step's error type.
  *
- * The fluent methods are here, and so are the static combinators
- * ({@link Result.all}, {@link Result.fromThrowable}, …) and the bridges to
- * {@link Option} and {@link Maybe}.
+ * Instance methods handle the fluent chain; static combinators
+ * ({@link Result.all}, {@link Result.fromThrowable}, …) and bridges to
+ * {@link Option} and {@link Maybe} are on the {@link Result} namespace.
  *
  * @module result/result
  * @author William Wu
@@ -31,15 +26,15 @@ import type { Maybe } from "../core/maybe";
 import { ResultPromise } from "./result-promise";
 
 /**
- * Coerce an unknown thrown value into an `Error`, the default when a `try`
- * boundary is not told how to interpret what it caught. Existing `Error`s pass
- * through; everything else is described as faithfully as it can be.
+ * Coerce an unknown thrown value into an `Error`; the default error mapper for
+ * the `try` combinators. Existing `Error`s pass through unchanged; other values
+ * are stringified into the message.
  */
 export function parseError(error: unknown): Error {
   if (error instanceof Error) return error;
   if (typeof error === "string") return new Error(error);
   if (typeof error === "object") {
-    // `null` lands here too (typeof null === "object") and stringifies to "null".
+    // `null` has typeof "object"; JSON.stringify(null) is "null".
     try {
       return new Error(JSON.stringify(error));
     } catch {
@@ -60,18 +55,17 @@ export function parseError(error: unknown): Error {
 }
 
 /**
- * The shared behaviour of {@link Ok} and {@link Err}. Every method is written
- * once here in terms of {@link ResultBase.match}, which is the single point
- * where the two variants differ.
+ * Base class for {@link Ok} and {@link Err}. Methods are defined once here in
+ * terms of {@link ResultBase.match}, the only member the two variants implement
+ * differently.
  *
  * @template T The value type carried on success.
  * @template E The error type carried on failure.
  */
 export abstract class ResultBase<T, E> {
   /**
-   * The one primitive the two variants implement differently: run `onOk` on the
-   * value, or `onErr` on the error. Everything else is built from it, and it
-   * doubles as the public pattern match.
+   * Apply `onOk` to the value or `onErr` to the error. Every other method is
+   * defined in terms of this one; it is also the public pattern match.
    */
   abstract match<A, B>(onOk: (value: T) => A, onErr: (error: E) => B): A | B;
 
@@ -238,7 +232,7 @@ export abstract class ResultBase<T, E> {
     );
   }
 
-  /** Lift into the async world so `await` and the {@link ResultPromise} chain apply. */
+  /** Wrap in a {@link ResultPromise} for the async chain. */
   toPromise(): ResultPromise<T, E> {
     return ResultPromise.fromResult(this as unknown as Result<T, E>);
   }

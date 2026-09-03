@@ -1,11 +1,10 @@
 /**
- * `OptionPromise<T>` — an {@link Option} that has not arrived yet.
+ * `OptionPromise<T>` is `Promise<Option<T>>`: the async form of {@link Option}.
  *
- * It is exactly `Promise<Option<T>>`: no wrapper, awaitable straight to
- * `T | null`, and interchangeable with any promise of a nullable. The namespace
- * here is the async twin of {@link Option}'s — every combinator takes the
- * promise as its first argument and returns another promise, so a chain reads
- * the same asleep as awake:
+ * No wrapper — awaitable to `T | null`, and interchangeable with any promise of
+ * a nullable. The namespace is the async twin of {@link Option}'s: each
+ * combinator takes the promise as its first argument and returns another
+ * promise.
  *
  * ```ts
  * await OptionPromise.unwrapOr(
@@ -14,9 +13,8 @@
  * );
  * ```
  *
- * This is the counterpart to {@link ResultPromise}, kept as a bare promise for
- * the same reason {@link Option} is a bare union: it costs nothing and composes
- * with the promises the platform already hands you.
+ * The bare-promise counterpart to {@link ResultPromise}, matching {@link Option}
+ * being a bare union.
  *
  * @module core/option-promise
  */

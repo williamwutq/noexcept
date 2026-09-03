@@ -1,17 +1,12 @@
 /**
- * `Option<T>` — a value or its explicit absence, spelled `null`.
+ * `Option<T>` is `T | null`: a value, or `null` for its absence.
  *
- * There is no wrapper object. `Option<T>` *is* `T | null`, so a some value is
- * just the value and none is just `null`. That keeps it free to construct, free
- * to pattern match with a plain `x === null`, and interchangeable with the
- * `T | null` that DOM and JSON APIs already hand you — while the namespace here
- * gives you the combinators that make working with it read like a pipeline
- * instead of a stack of `if`s.
+ * There is no wrapper object — a present value is the value itself, an absent
+ * one is `null`. It constructs without allocation, tests with `x === null`, and
+ * is assignable to any `T | null`. The namespace holds the operations on it.
  *
- * `undefined` is deliberately *not* absence here — that is {@link Maybe}'s job.
- * Keeping the two apart lets a value be present-and-null distinctly from
- * uninitialised, which is exactly the distinction a form field cleared to empty
- * needs to survive.
+ * Absence is `null` only; `undefined` is {@link Maybe}'s. Keeping the two apart
+ * keeps a present-but-`null` value distinct from an uninitialised one.
  *
  * @module core/option
  * @see Maybe for `T | undefined`
@@ -30,7 +25,7 @@ export type Option<T> = T | null;
 
 /** The {@link Option} namespace. */
 export const Option = Object.freeze({
-  /** Wrap a present value. Identity — a some option is just the value. */
+  /** Wrap a present value (the identity function). */
   some: <T>(value: T): Option<T> => value,
 
   /** The absent option. */
@@ -51,9 +46,8 @@ export const Option = Object.freeze({
     option === null || predicate(option),
 
   /**
-   * The value, or throw. Reserve this for the places a none is a genuine bug;
-   * everywhere else, {@link Option.unwrapOr} or {@link Option.match} branch
-   * without an exception.
+   * The value, or throw when absent. For cases where absence is a bug; use
+   * {@link Option.unwrapOr} or {@link Option.match} to branch without throwing.
    */
   unwrap: <T>(option: Option<T>, message?: string): T => {
     if (option === null) throw new Error(message ?? "Called unwrap on Option.none");

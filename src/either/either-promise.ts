@@ -1,10 +1,8 @@
 /**
- * `EitherPromise<T, A>` — an {@link Either} that has not arrived yet.
- *
- * It wraps a `Promise<Either<T, A>>` and is itself awaitable, so `await`ing one
- * gives a plain {@link Either}. Like {@link Either} it keeps neither side
- * privileged: every operation comes as a symmetric pair, and {@link EitherPromise.flip}
- * swaps the two. It is the async twin of {@link Either}, exactly as
+ * `EitherPromise<T, A>` wraps a `Promise<Either<T, A>>` and is itself awaitable:
+ * `await`ing one yields an {@link Either}. Like {@link Either}, neither side is
+ * privileged — every operation comes as a symmetric pair, and
+ * {@link EitherPromise.flip} swaps the two. The async twin of {@link Either}, as
  * {@link ResultPromise} is of `Result`.
  *
  * @module either/either-promise

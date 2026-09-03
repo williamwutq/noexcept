@@ -1,10 +1,9 @@
 /**
- * `Maybe<T>` — a value or its absence spelled `undefined`.
+ * `Maybe<T>` is `T | undefined`: a value, or `undefined` for its absence.
  *
- * The counterpart to {@link Option}: same idea, different absence. `undefined`
- * is the shape JavaScript reaches for when something was never set — a missing
- * property, an out-of-range index, a parameter left off — so `Maybe` is the
- * type that meets those at the boundary without a wrapper.
+ * The counterpart to {@link Option}, with `undefined` as the absent case rather
+ * than `null`. Use it for missing properties, out-of-range indices, and omitted
+ * parameters.
  *
  * @module core/maybe
  * @see Option for `T | null`
