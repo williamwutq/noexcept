@@ -117,8 +117,10 @@ bun run check     # all of the above
 
 ## Status
 
-Implemented: `Option`, `Maybe`, `Absent`, `Result`, `ResultPromise`, and the
-refinement types. Planned: `Either`, `OptionPromise`, and further refinements.
+Implemented: `Option`, `Maybe`, `Absent` and their async twins
+`OptionPromise` / `MaybePromise` / `AbsentPromise`; `Result` and `ResultPromise`;
+`Either` (a symmetric two-sided value, neither side an error); and the
+refinement types. Planned: further refinements.
 
 ## License
 
