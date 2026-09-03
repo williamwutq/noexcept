@@ -222,6 +222,16 @@ export const Either = Object.freeze({
   main,
   alt,
 
+  /**
+   * Choose between two already-computed values by a `condition` that depends on
+   * neither: `true` takes `left` as the main side, `false` takes `right` as the
+   * alternative. Both `left` and `right` are ordinary arguments, so both are
+   * evaluated before the call — this is a choice between two results, not a lazy
+   * branch (for that, see {@link EitherBase.andThen} / {@link Either.main}).
+   */
+  select: <T, A>(condition: boolean, left: T, right: A): Either<T, A> =>
+    condition ? main(left) : alt(right),
+
   /** True when `value` is an `Either` (a {@link Main} or an {@link Alt}). */
   is: (value: unknown): value is Either<unknown, unknown> => value instanceof EitherBase,
 

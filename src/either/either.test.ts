@@ -78,6 +78,26 @@ test("bridges with Result", () => {
   expect(alt<string, number>("e").toResult().unwrapErr()).toBe("e");
 });
 
+test("Either.select chooses eagerly by condition", () => {
+  expect(Either.select(true, 1, "x").unwrapMain()).toBe(1);
+  expect(Either.select(false, 1, "x").unwrapAlt()).toBe("x");
+
+  // both arguments are evaluated regardless of the condition
+  let leftEvaluated = false;
+  let rightEvaluated = false;
+  const left = (() => {
+    leftEvaluated = true;
+    return 1;
+  })();
+  const right = (() => {
+    rightEvaluated = true;
+    return "x";
+  })();
+  Either.select(true, left, right);
+  expect(leftEvaluated).toBe(true);
+  expect(rightEvaluated).toBe(true);
+});
+
 test("Either.is", () => {
   expect(Either.is(main(1))).toBe(true);
   expect(Either.is(alt(1))).toBe(true);
