@@ -58,4 +58,22 @@ export const Primitives = Object.freeze({
     (value: unknown): value is (...args: never) => unknown => typeof value === "function",
     "function",
   ),
+
+  /** A valid `Date` — an instance, not an Invalid Date. No default. */
+  Date: Refinement.of(
+    (value: unknown): value is Date => value instanceof Date && !Number.isNaN(value.getTime()),
+    "date",
+  ),
+
+  /** A `bigint`. Default `0n`. */
+  BigInt: Default.impl(
+    Refinement.of((value: unknown): value is bigint => typeof value === "bigint", "bigint"),
+    (): bigint => 0n,
+  ),
+
+  /** A `symbol`. No default. */
+  Symbol: Refinement.of(
+    (value: unknown): value is symbol => typeof value === "symbol",
+    "symbol",
+  ),
 });

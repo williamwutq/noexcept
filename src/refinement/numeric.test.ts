@@ -4,6 +4,11 @@ import {
   PositiveInteger,
   NonNegativeInteger,
   NegativeInteger,
+  SafeInteger,
+  integerAtLeast,
+  integerAbove,
+  integerAtMost,
+  integerInRange,
   type IntegerBelow,
   type IntegerRange,
   type PositiveIntegerUpTo,
@@ -67,4 +72,27 @@ test("literal ranges are compile-time unions", () => {
   // @ts-expect-error 0 is not a positive integer.
   const bad2: PositiveIntegerUpTo<3> = 0;
   expect(raw(bad2)).toBe(0);
+});
+
+test("SafeInteger", () => {
+  expect(SafeInteger.is(2 ** 53 - 1)).toBe(true);
+  expect(SafeInteger.is(2 ** 53)).toBe(false);
+  expect(SafeInteger.is(1.5)).toBe(false);
+  expect(SafeInteger.is("3")).toBe(false);
+});
+
+test("bounded-integer factories", () => {
+  expect(integerAtLeast(5).is(5)).toBe(true);
+  expect(integerAtLeast(5).is(4)).toBe(false);
+  expect(integerAbove(5).is(5)).toBe(false);
+  expect(integerAbove(5).is(6)).toBe(true);
+  expect(integerAtMost(5).is(5)).toBe(true);
+  expect(integerAtMost(5).is(6)).toBe(false);
+  expect(integerInRange(1, 3).is(2)).toBe(true);
+  expect(integerInRange(1, 3).is(4)).toBe(false);
+  expect(integerInRange(1, 3).is(2.5)).toBe(false);
+  // labelled for decode
+  expect(integerInRange(1, 3).decode(9).unwrapErr()).toEqual([
+    { path: [], message: "expected integer in [1, 3]" },
+  ]);
 });

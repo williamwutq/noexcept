@@ -49,6 +49,11 @@ export {
   PositiveInteger,
   NonNegativeInteger,
   NegativeInteger,
+  SafeInteger,
+  integerAtLeast,
+  integerAbove,
+  integerAtMost,
+  integerInRange,
 } from "./refinement/numeric";
 export type {
   IntegerBelow,

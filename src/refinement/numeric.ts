@@ -68,6 +68,38 @@ export const NegativeInteger = Refinement.of(
   "negative integer",
 );
 
+/** A whole number within ±(2^53 − 1), where integer arithmetic stays exact. */
+export type SafeInteger = Brand<number, "SafeInteger">;
+
+/** The {@link SafeInteger} refinement. */
+export const SafeInteger = Refinement.of(
+  (value: unknown): value is SafeInteger => Number.isSafeInteger(value),
+  "safe integer",
+);
+
+/* -------------------------------------------------------------------------- */
+/*  Bounded-integer factories (runtime, since a bound is not a literal union)  */
+/* -------------------------------------------------------------------------- */
+
+/** A refinement for integers at or above `min` (inclusive). */
+export const integerAtLeast = (min: number): Refinement<Integer> =>
+  Refinement.of((value: unknown): value is Integer => isInteger(value) && value >= min, `integer ≥ ${min}`);
+
+/** A refinement for integers strictly above `min` (exclusive). */
+export const integerAbove = (min: number): Refinement<Integer> =>
+  Refinement.of((value: unknown): value is Integer => isInteger(value) && value > min, `integer > ${min}`);
+
+/** A refinement for integers at or below `max` (inclusive). */
+export const integerAtMost = (max: number): Refinement<Integer> =>
+  Refinement.of((value: unknown): value is Integer => isInteger(value) && value <= max, `integer ≤ ${max}`);
+
+/** A refinement for integers in `[min, max]` (both inclusive). */
+export const integerInRange = (min: number, max: number): Refinement<Integer> =>
+  Refinement.of(
+    (value: unknown): value is Integer => isInteger(value) && value >= min && value <= max,
+    `integer in [${min}, ${max}]`,
+  );
+
 /* -------------------------------------------------------------------------- */
 /*  Literal (compile-time) refinements                                        */
 /* -------------------------------------------------------------------------- */

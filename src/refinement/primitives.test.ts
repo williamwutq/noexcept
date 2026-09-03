@@ -54,3 +54,16 @@ test("Refinement.array() with no element accepts any array", () => {
   expect(AnyNonEmpty.is([1])).toBe(true);
   expect(AnyNonEmpty.is([])).toBe(false);
 });
+
+test("Date / BigInt / Symbol", () => {
+  expect(Primitives.Date.is(new Date())).toBe(true);
+  expect(Primitives.Date.is(new Date("nonsense"))).toBe(false); // Invalid Date
+  expect(Primitives.Date.is(0)).toBe(false);
+
+  expect(Primitives.BigInt.is(1n)).toBe(true);
+  expect(Primitives.BigInt.is(1)).toBe(false);
+  expect(Default.of(Primitives.BigInt)).toBe(0n);
+
+  expect(Primitives.Symbol.is(Symbol("x"))).toBe(true);
+  expect(Primitives.Symbol.is("x")).toBe(false);
+});
