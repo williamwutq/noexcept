@@ -115,21 +115,30 @@ export const Refinement = Object.freeze({
     );
   },
 
-  /** A list whose every element accepts `element`. An empty list accepts. */
-  array: <T>(element: Spec<T>): Refinement<Array<T>> => {
-    const guard = guardOf(element);
+  /**
+   * A list whose every element accepts `element`; an empty list accepts. Without
+   * `element`, any array (`Array<unknown>`).
+   */
+  array: <T = unknown>(element?: Spec<T>): Refinement<Array<T>> => {
+    const guard = element === undefined ? undefined : guardOf(element);
     return derive(
       (value): value is Array<T> =>
-        Array.isArray(value) && value.every((item: unknown) => guard(item)),
+        Array.isArray(value) &&
+        (guard === undefined || value.every((item: unknown) => guard(item))),
     );
   },
 
-  /** A list of at least one element, every one accepting `element`. */
-  nonEmptyArray: <T>(element: Spec<T>): Refinement<NonEmptyArray<T>> => {
-    const guard = guardOf(element);
+  /**
+   * A list of at least one element, every one accepting `element`. Without
+   * `element`, any non-empty array (`NonEmptyArray<unknown>`).
+   */
+  nonEmptyArray: <T = unknown>(element?: Spec<T>): Refinement<NonEmptyArray<T>> => {
+    const guard = element === undefined ? undefined : guardOf(element);
     return derive(
       (value): value is NonEmptyArray<T> =>
-        Array.isArray(value) && value.length > 0 && value.every((item: unknown) => guard(item)),
+        Array.isArray(value) &&
+        value.length > 0 &&
+        (guard === undefined || value.every((item: unknown) => guard(item))),
     );
   },
 

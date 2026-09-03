@@ -41,6 +41,7 @@ export { Refinement } from "./refinement/guard";
 export type { Guard, Spec } from "./refinement/guard";
 export { Default } from "./refinement/default";
 export type { Defaulted } from "./refinement/default";
+export { Primitives } from "./refinement/primitives";
 
 // Refined numeric types — branded runtime refinements + literal ranges.
 export {
