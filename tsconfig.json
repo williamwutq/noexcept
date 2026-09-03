@@ -34,6 +34,6 @@
     "isolatedModules": true,
     "resolveJsonModule": true
   },
-  "include": ["src", "eslint.config.js"],
+  "include": ["src"],
   "exclude": ["dist", "node_modules"]
 }

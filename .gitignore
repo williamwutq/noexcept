@@ -4,6 +4,7 @@ dist/
 
 # Bun
 bun.lockb
+# bun.lock is committed
 
 # Editor / OS
 .DS_Store
