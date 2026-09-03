@@ -18,7 +18,7 @@ import { Default } from "./default";
 export const Primitives = Object.freeze({
   /** Any string. Default `""`. */
   String: Default.impl(
-    Refinement.of((value: unknown): value is string => typeof value === "string"),
+    Refinement.of((value: unknown): value is string => typeof value === "string", "string"),
     (): string => "",
   ),
 
@@ -26,13 +26,14 @@ export const Primitives = Object.freeze({
   Number: Default.impl(
     Refinement.of(
       (value: unknown): value is number => typeof value === "number" && Number.isFinite(value),
+      "number",
     ),
     (): number => 0,
   ),
 
   /** A boolean. Default `false`. */
   Boolean: Default.impl(
-    Refinement.of((value: unknown): value is boolean => typeof value === "boolean"),
+    Refinement.of((value: unknown): value is boolean => typeof value === "boolean", "boolean"),
     (): boolean => false,
   ),
 
@@ -41,18 +42,20 @@ export const Primitives = Object.freeze({
     Refinement.of(
       (value: unknown): value is Record<string, unknown> =>
         value !== null && typeof value === "object" && !Array.isArray(value),
+      "object",
     ),
     (): Record<string, unknown> => ({}),
   ),
 
   /** An array of anything. Default `[]`. Pass an element to {@link Refinement.array} to check elements. */
   Array: Default.impl(
-    Refinement.of((value: unknown): value is Array<unknown> => Array.isArray(value)),
+    Refinement.of((value: unknown): value is Array<unknown> => Array.isArray(value), "array"),
     (): Array<unknown> => [],
   ),
 
   /** A function. No default. */
   Function: Refinement.of(
     (value: unknown): value is (...args: never) => unknown => typeof value === "function",
+    "function",
   ),
 });

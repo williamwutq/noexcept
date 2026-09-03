@@ -16,6 +16,7 @@ export type NonEmptyString = Brand<string, "NonEmptyString">;
 
 const nonEmpty = Refinement.of(
   (value: unknown): value is NonEmptyString => typeof value === "string" && value.length > 0,
+  "non-empty string",
 );
 
 /** The {@link NonEmptyString} namespace: the refinement, plus {@link NonEmptyString.trimmed}. */

@@ -43,24 +43,29 @@ const isInteger = (value: unknown): value is number =>
  * returns `null` for a non-integer; `Integer.is` narrows `unknown` to `Integer`.
  */
 export const Integer = Default.impl(
-  Refinement.of((value: unknown): value is Integer => isInteger(value)),
+  Refinement.of((value: unknown): value is Integer => isInteger(value), "integer"),
   (): Integer => 0 as Integer,
 );
 
 /** The {@link PositiveInteger} refinement — no canonical default. */
 export const PositiveInteger = Refinement.of(
   (value: unknown): value is PositiveInteger => isInteger(value) && value > 0,
+  "positive integer",
 );
 
 /** The {@link NonNegativeInteger} refinement, with a {@link Default} of `0`. */
 export const NonNegativeInteger = Default.impl(
-  Refinement.of((value: unknown): value is NonNegativeInteger => isInteger(value) && value >= 0),
+  Refinement.of(
+    (value: unknown): value is NonNegativeInteger => isInteger(value) && value >= 0,
+    "non-negative integer",
+  ),
   (): NonNegativeInteger => 0 as NonNegativeInteger,
 );
 
 /** The {@link NegativeInteger} refinement — no canonical default. */
 export const NegativeInteger = Refinement.of(
   (value: unknown): value is NegativeInteger => isInteger(value) && value < 0,
+  "negative integer",
 );
 
 /* -------------------------------------------------------------------------- */

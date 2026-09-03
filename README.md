@@ -102,10 +102,17 @@ const User = Refinement.shape({
   tags: Refinement.array(Primitives.String),
 });
 User.is(json); // narrows json to { name: NonEmptyString; age: Integer; tags: string[] }
+
+// `decode` validates and reports every failure with its path:
+User.decode({ name: "", age: 1.5, tags: [] }).unwrapErr();
+// [ { path: ["name"], message: "expected non-empty string" },
+//   { path: ["age"],  message: "expected integer" } ]
 ```
 
-`Refinement.of` / `brand` / `and` / `or` / `array` / `nonEmptyArray` / `shape` /
-`nullable` / `optional` / `literal` / `matches` / `instanceOf` all build
+`is` narrows; `parse` returns the value or `null`; `decode` returns
+`Result<T, Issue[]>` with `{ path, message }` for every failing field (collected,
+not fail-fast). `Refinement.of` / `brand` / `and` / `or` / `array` / `nonEmptyArray` / `shape` /
+`record` / `tuple` / `nullable` / `optional` / `literal` / `matches` / `instanceOf` all build
 refinements. `Primitives` covers `String`, `Number`, `Boolean`, `Object`,
 `Array`, `Function`. `Default` is a separate opt-in trait for a canonical
 starting value (`Default.of(Integer)` is `0`; `Default.option`/`Default.list`

@@ -38,7 +38,7 @@ export type { Brand, Unbrand } from "./refinement/nominal";
 
 // Refinement machinery — the `is` trait, its derived parser, and combinators.
 export { Refinement } from "./refinement/guard";
-export type { Guard, Spec } from "./refinement/guard";
+export type { Guard, Spec, Issue } from "./refinement/guard";
 export { Default } from "./refinement/default";
 export type { Defaulted } from "./refinement/default";
 export { Primitives } from "./refinement/primitives";
