@@ -50,6 +50,27 @@ Each has `map`, `andThen`, `filter`, `match`, `unwrapOr`, `or`/`orElse`, `zip`,
 to `Result` (`okOr`). Their async twins (`OptionPromise` etc.) are
 `Promise<Option<T>>` with the same functions, each async.
 
+### Nesting safety
+
+Because a bare union is a literal union, nesting it collapses:
+`Option<Option<T>>` is `(T | null) | null`, i.e. `Option<T>` — the "present but
+absent" case is lost, and the two types are indistinguishable to the compiler.
+The constructors and `map` guard against it at compile time: the value type must
+not already admit the container's absence (`null` for `Option`, `undefined` for
+`Maybe`, either for `Absent`). A `map` whose function returns an `Option` is a
+type error steering you to `andThen`, which flattens.
+
+```ts
+Option.some(3);                 // ok
+Option.some(x as string | null); // ✗ value already admits null
+Option.map(opt, findOption);    // ✗ would nest — use andThen
+Option.andThen(opt, findOption); // ok, flattens
+```
+
+The predicate is also exposed directly: `AllowsNull<T>`, `AllowsUndefined<T>`,
+and `AllowsAbsent<T>` each resolve to `true` when `T` already admits that
+absence.
+
 ## `Result`, `ResultPromise`
 
 `Result<T, E>` is a discriminated union of `Ok<T, E>` and `Err<T, E>`. A chain of

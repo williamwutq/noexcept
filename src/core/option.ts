@@ -14,6 +14,7 @@
  */
 
 import type { Maybe } from "./maybe.js";
+import type { NoNestOption, NoNestOptionArg } from "./nest.js";
 import { ok, err, type Result } from "../result/result.js";
 
 /**
@@ -25,8 +26,11 @@ export type Option<T> = T | null;
 
 /** The {@link Option} namespace. */
 export const Option = Object.freeze({
-  /** Wrap a present value (the identity function). */
-  some: <T>(value: T): Option<T> => value,
+  /**
+   * Wrap a present value (the identity function). `T` must not already admit
+   * `null`, or the option would collapse ({@link NoNestOptionArg}).
+   */
+  some: <T>(value: T, ..._nesting: NoNestOptionArg<T>): Option<T> => value,
 
   /** The absent option. */
   none: null,
@@ -62,8 +66,12 @@ export const Option = Object.freeze({
   unwrapOrElse: <T>(option: Option<T>, fn: () => T): T =>
     option !== null ? option : fn(),
 
-  /** Map the value, leaving none untouched. */
-  map: <T, U>(option: Option<T>, fn: (value: T) => U): Option<U> =>
+  /**
+   * Map the value, leaving none untouched. The result `U` must not itself admit
+   * `null` — an option-returning `fn` would nest and collapse; use
+   * {@link Option.andThen} to flatten instead ({@link NoNestOption}).
+   */
+  map: <T, U>(option: Option<T>, fn: (value: T) => U & NoNestOption<U>): Option<U> =>
     option !== null ? fn(option) : null,
 
   /** Map, then flatten — for functions that themselves return an {@link Option}. */
@@ -155,8 +163,11 @@ export const Option = Object.freeze({
     value ?? null,
 
   /** Some `value` when it passes `predicate`, otherwise none. */
-  fromPredicate: <T>(value: T, predicate: (value: T) => boolean): Option<T> =>
-    predicate(value) ? value : null,
+  fromPredicate: <T>(
+    value: T,
+    predicate: (value: T) => boolean,
+    ..._nesting: NoNestOptionArg<T>
+  ): Option<T> => (predicate(value) ? value : null),
 
   /** To a {@link Result}: the value as `Ok`, or `Err(error)` when absent. */
   okOr: <T, E>(option: Option<T>, error: E): Result<T, E> =>

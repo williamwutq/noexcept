@@ -29,6 +29,15 @@ export { OptionPromise } from "./core/option-promise.js";
 export { MaybePromise } from "./core/maybe-promise.js";
 export { AbsentPromise } from "./core/absent-promise.js";
 
+// Compile-time detection of an already-nullish `T`, to keep the bare unions
+// from nesting into themselves (`Option<Option<T>>` collapses to `Option<T>`).
+export type {
+  AllowsNull,
+  AllowsUndefined,
+  AllowsAbsent,
+  NestError,
+} from "./core/nest.js";
+
 // Result — a value or an error, as a fluent wrapper.
 export { Result, Ok, Err, ok, err } from "./result/result.js";
 export { ResultPromise } from "./result/result-promise.js";

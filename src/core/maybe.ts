@@ -11,6 +11,7 @@
  */
 
 import type { Option } from "./option.js";
+import type { NoNestMaybe, NoNestMaybeArg } from "./nest.js";
 import { ok, err, type Result } from "../result/result.js";
 
 /**
@@ -22,8 +23,11 @@ export type Maybe<T> = T | undefined;
 
 /** The {@link Maybe} namespace. */
 export const Maybe = Object.freeze({
-  /** Wrap a present value. Identity — a some maybe is just the value. */
-  some: <T>(value: T): Maybe<T> => value,
+  /**
+   * Wrap a present value. Identity — a some maybe is just the value. `T` must
+   * not already admit `undefined`, or the maybe would collapse ({@link NoNestMaybeArg}).
+   */
+  some: <T>(value: T, ..._nesting: NoNestMaybeArg<T>): Maybe<T> => value,
 
   /** The absent maybe. */
   none: undefined,
@@ -56,8 +60,12 @@ export const Maybe = Object.freeze({
   unwrapOrElse: <T>(maybe: Maybe<T>, fn: () => T): T =>
     maybe !== undefined ? maybe : fn(),
 
-  /** Map the value, leaving none untouched. */
-  map: <T, U>(maybe: Maybe<T>, fn: (value: T) => U): Maybe<U> =>
+  /**
+   * Map the value, leaving none untouched. The result `U` must not itself admit
+   * `undefined` — a maybe-returning `fn` would nest and collapse; use
+   * {@link Maybe.andThen} to flatten instead ({@link NoNestMaybe}).
+   */
+  map: <T, U>(maybe: Maybe<T>, fn: (value: T) => U & NoNestMaybe<U>): Maybe<U> =>
     maybe !== undefined ? fn(maybe) : undefined,
 
   /** Map, then flatten — for functions that themselves return a {@link Maybe}. */
@@ -149,8 +157,11 @@ export const Maybe = Object.freeze({
     value ?? undefined,
 
   /** Some `value` when it passes `predicate`, otherwise none. */
-  fromPredicate: <T>(value: T, predicate: (value: T) => boolean): Maybe<T> =>
-    predicate(value) ? value : undefined,
+  fromPredicate: <T>(
+    value: T,
+    predicate: (value: T) => boolean,
+    ..._nesting: NoNestMaybeArg<T>
+  ): Maybe<T> => (predicate(value) ? value : undefined),
 
   /** To a {@link Result}: the value as `Ok`, or `Err(error)` when absent. */
   okOr: <T, E>(maybe: Maybe<T>, error: E): Result<T, E> =>

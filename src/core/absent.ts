@@ -13,6 +13,7 @@
 
 import type { Option } from "./option.js";
 import type { Maybe } from "./maybe.js";
+import type { NoNestAbsent, NoNestAbsentArg } from "./nest.js";
 import { ok, err, type Result } from "../result/result.js";
 
 /**
@@ -56,8 +57,13 @@ export const Absent = Object.freeze({
   unwrapOrElse: <T>(value: Absent<T>, fn: () => T): T =>
     value !== null && value !== undefined ? value : fn(),
 
-  /** Map the value, leaving either absence untouched (as `undefined`). */
-  map: <T, U>(value: Absent<T>, fn: (value: T) => U): Maybe<U> =>
+  /**
+   * Map the value, leaving either absence untouched (as `undefined`). The result
+   * `U` must not itself admit `null` or `undefined` — an absent-returning `fn`
+   * would nest and collapse; use {@link Absent.andThen} to flatten instead
+   * ({@link NoNestAbsent}).
+   */
+  map: <T, U>(value: Absent<T>, fn: (value: T) => U & NoNestAbsent<U>): Maybe<U> =>
     value !== null && value !== undefined ? fn(value) : undefined,
 
   /** Map, then flatten — for functions that themselves return an {@link Absent}. */
@@ -95,8 +101,11 @@ export const Absent = Object.freeze({
   },
 
   /** Some `value` when it passes `predicate`, otherwise absent (as `undefined`). */
-  fromPredicate: <T>(value: T, predicate: (value: T) => boolean): Maybe<T> =>
-    predicate(value) ? value : undefined,
+  fromPredicate: <T>(
+    value: T,
+    predicate: (value: T) => boolean,
+    ..._nesting: NoNestAbsentArg<T>
+  ): Maybe<T> => (predicate(value) ? value : undefined),
 
   /** To a {@link Result}: the value as `Ok`, or `Err(error)` when absent. */
   okOr: <T, E>(value: Absent<T>, error: E): Result<T, E> =>
