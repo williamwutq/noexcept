@@ -100,6 +100,33 @@ export const integerInRange = (min: number, max: number): Refinement<Integer> =>
     `integer in [${min}, ${max}]`,
   );
 
+/** A finite number — the shared check for the bounded-number factories. */
+const isFiniteNumber = (value: unknown): value is number =>
+  typeof value === "number" && Number.isFinite(value);
+
+/** A refinement for finite numbers at or above `min` (inclusive). */
+export const numberAtLeast = (min: number): Refinement<number> =>
+  Refinement.of((value: unknown): value is number => isFiniteNumber(value) && value >= min, `number ≥ ${min}`);
+
+/** A refinement for finite numbers strictly above `min` (exclusive). */
+export const numberAbove = (min: number): Refinement<number> =>
+  Refinement.of((value: unknown): value is number => isFiniteNumber(value) && value > min, `number > ${min}`);
+
+/** A refinement for finite numbers at or below `max` (inclusive). */
+export const numberAtMost = (max: number): Refinement<number> =>
+  Refinement.of((value: unknown): value is number => isFiniteNumber(value) && value <= max, `number ≤ ${max}`);
+
+/** A refinement for finite numbers strictly below `max` (exclusive). */
+export const numberBelow = (max: number): Refinement<number> =>
+  Refinement.of((value: unknown): value is number => isFiniteNumber(value) && value < max, `number < ${max}`);
+
+/** A refinement for finite numbers in `[min, max]` (both inclusive). */
+export const numberInRange = (min: number, max: number): Refinement<number> =>
+  Refinement.of(
+    (value: unknown): value is number => isFiniteNumber(value) && value >= min && value <= max,
+    `number in [${min}, ${max}]`,
+  );
+
 /* -------------------------------------------------------------------------- */
 /*  Literal (compile-time) refinements                                        */
 /* -------------------------------------------------------------------------- */

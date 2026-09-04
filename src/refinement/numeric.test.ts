@@ -9,6 +9,11 @@ import {
   integerAbove,
   integerAtMost,
   integerInRange,
+  numberAtLeast,
+  numberAbove,
+  numberAtMost,
+  numberBelow,
+  numberInRange,
   type IntegerBelow,
   type IntegerRange,
   type PositiveIntegerUpTo,
@@ -95,4 +100,18 @@ test("bounded-integer factories", () => {
   expect(integerInRange(1, 3).decode(9).unwrapErr()).toEqual([
     { path: [], message: "expected integer in [1, 3]" },
   ]);
+});
+
+test("bounded-number factories (finite floats)", () => {
+  expect(numberAtLeast(0).is(0)).toBe(true);
+  expect(numberAtLeast(0).is(-0.1)).toBe(false);
+  expect(numberAbove(0).is(0)).toBe(false);
+  expect(numberAtMost(1).is(1)).toBe(true);
+  expect(numberBelow(1).is(1)).toBe(false);
+  expect(numberBelow(1).is(0.999)).toBe(true);
+  expect(numberInRange(0, 1).is(0.5)).toBe(true);
+  expect(numberInRange(0, 1).is(1.5)).toBe(false);
+  expect(numberInRange(0, 1).is(Number.NaN)).toBe(false); // not finite
+  expect(numberInRange(0, 1).is(Number.POSITIVE_INFINITY)).toBe(false);
+  expect(numberBelow(1).decode(2).unwrapErr()).toEqual([{ path: [], message: "expected number < 1" }]);
 });
