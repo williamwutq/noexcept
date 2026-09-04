@@ -154,6 +154,15 @@ User.decode({ name: "", age: 1.5, tags: [] }).unwrapErr();
   `NegativeInteger`, `SafeInteger`, `NonEmptyString`, `ErrorString`, plus the
   bounded-integer factories `integerAtLeast` / `integerAbove` / `integerAtMost` /
   `integerInRange`, and `NonEmptyArray`.
+- **Formats**: `Email`, `Url`, `Uuid`, `Ipv4` / `Ipv6` / `Ip`, `HexColor`,
+  `Slug`, `Base64` / `Base64Url`, `HexString`, `SemVer`, `DateString` /
+  `TimeString` / `DateTimeString`, `Port`, `Byte`, `Percentage`, `Latitude`,
+  `Longitude`. These follow the HTML5/WHATWG definitions, not RFC/ISO — `Email`
+  is the `<input type=email>` pattern, `Url` uses the URL parser, and the dates
+  require the extended form (`2026-05-12`, not `20260512`).
+- **Range factories**: `integerAtLeast` / `integerAbove` / `integerAtMost` /
+  `integerInRange`, and `numberAtLeast` / `numberAbove` / `numberAtMost` /
+  `numberBelow` / `numberInRange` (finite floats).
 - **`Default`** is a separate opt-in trait for a canonical starting value
   (`Default.of(Integer)` is `0`; `Default.option` / `Default.list` supply
   `null` / `[]`).
